@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import logo from "../../assets/images/Logo.svg";
 
-const Navbar = () => {
+const Navbar1 = () => {
   return (
     <Bar>
       <SectionA>A</SectionA>
@@ -45,22 +45,22 @@ const SectionA = styled.div`
 
 const SectionB = styled.div`
   position: fixed;
-  margin-left: 400px;
+  margin-left: 385px;
 `;
 
 const SectionC = styled.div`
   position: fixed;
-  margin-left: 665px;
+  margin-left: 650px;
 `;
 
 const SectionD = styled.div`
   position: fixed;
-  margin-left: 790px;
+  margin-left: 810px;
 `;
 
 const SectionMode = styled.div`
   position: fixed;
-  margin-left: 890px;
+  margin-left: 895px;
   cursor: pointer;
   text-decoration: none;
   box-shadow: inset 0 -1px 0 0 black;
@@ -69,12 +69,12 @@ const SectionMode = styled.div`
 
 const SectionRecord = styled.div`
   position: fixed;
-  margin-left: 1020px;
+  margin-left: 1023px;
 `;
 
 const SectionArchieve = styled.div`
   position: absolute;
-  margin-left: 1170px;
+  margin-left: 1175px;
 `;
 
 const RecordSection = styled.div`
@@ -89,4 +89,4 @@ const RecordSection = styled.div`
 
 const ArchieveSection = styled(RecordSection)``;
 
-export default Navbar;
+export default Navbar1;

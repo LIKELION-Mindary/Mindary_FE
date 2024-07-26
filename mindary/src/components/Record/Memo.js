@@ -28,19 +28,20 @@ const Memo = () => {
       <Msg>
         {messages.map((msg, index) => (
           <Message key={index}>
+            <Time>오전 1시 18분</Time>
             <TextBox>{msg}</TextBox>
           </Message>
         ))}
       </Msg>
       <InputWrapper>
         <Input
-          placeholder="오늘의 하루를 요약해서 정리해보세요"
+          placeholder="하고 싶은 말, 마음에 담아두지 마세요."
           value={inputValue}
           onChange={handleInputChange}
           onKeyPress={handleKeyPress}
         />
-        <InputBtn onClick={handleButtonClick}>입력</InputBtn>
       </InputWrapper>
+      <InputBtn onClick={handleButtonClick}>등록하기</InputBtn>
     </Body>
   );
 };
@@ -50,15 +51,12 @@ export default Memo;
 const Body = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 30px;
-  border: 2px solid black;
-  width: 380px;
-  height: 444px;
-  border-radius: 4px;
+  border: 1.5px solid black;
+  width: 403px;
+  height: 487px;
 `;
 
 const InputWrapper = styled.div`
-  position: relative; /* 부모 요소를 기준으로 버튼 위치를 절대적으로 설정할 수 있습니다. */
   display: flex;
   flex-direction: column;
   border-top: 1px solid #ccc;
@@ -66,37 +64,48 @@ const InputWrapper = styled.div`
 
 const Input = styled.textarea`
   width: 100%;
-  height: 100px;
-  padding: 10px;
+  height: 90px;
+  padding: 20px 10px;
   border: none;
   resize: none; /* 사용자가 크기를 조절하지 못하게 합니다. */
   box-sizing: border-box; /* padding과 border가 요소의 총 너비와 높이에 포함되도록 합니다. */
-  font-size: 14px;
+  font-size: 14.11px;
+  font-weight: 400;
   &::placeholder {
     color: #d0d0d0;
+    font-size: 14px;
   }
 `;
 
 const Msg = styled.div`
-  height: 320px;
+  height: 365px;
+  width: 100%;
   border: none;
-  margin-bottom: 20px;
+  margin: 0;
+  overflow-x: hidden;
   overflow-y: auto;
+`;
+
+const Time = styled.div`
+  height: 30px;
+  font-size: 14px;
+  padding: 10px;
 `;
 
 const Message = styled.div`
   display: flex;
-  align-items: center;
-  margin-bottom: 5px;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 2px;
 `;
 
 const TextBox = styled.div`
   padding: 15px 25px;
-  border: 2px solid #000000;
-  border-radius: 4px;
+  background-color: white;
+  border: none;
   font-size: 14px;
   font-weight: 400;
-  width: 345px;
+  width: 340px;
 `;
 
 const InputBtn = styled.button`
@@ -107,5 +116,6 @@ const InputBtn = styled.button`
   height: 30px;
   font-size: 13px;
   border: none;
+  text-decoration: underline;
   cursor: pointer;
 `;
