@@ -2,18 +2,20 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { Toggle } from "./Toggle";
 import Memo from "./Memo";
+import moment from "moment";
 
-const Diary = () => {
+const Diary = ({ selectedDate }) => {
   const [isMemo, setIsMemo] = useState(false);
 
   const handleToggle = () => {
     setIsMemo(!isMemo);
   };
-
   return (
     <Container>
       <TitleBox>
-        <Title>{isMemo ? "DIARY" : "MEMO"}</Title>
+        <Title>
+          {isMemo ? "DIARY" : moment(selectedDate).format("M월 D일 일지")}
+        </Title>
         <Toggle isOn={isMemo} toggleHandler={handleToggle} />
       </TitleBox>
       <BodyContainer>
@@ -33,7 +35,7 @@ const Diary = () => {
             </Content>
           </Body>
         ) : (
-          <Memo />
+          <Memo date={selectedDate} />
         )}
       </BodyContainer>
     </Container>
@@ -50,8 +52,8 @@ const Body = styled.div`
   justify-content: center;
   align-items: center;
   border: 1.5px solid black;
-  width: 387px;
-  height: 471px;
+  width: 383px;
+  height: 509px;
   padding: 8px;
 `;
 
@@ -69,9 +71,9 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   position: fixed;
-  top: 163px;
-  left: 725px;
-  width: 406px;
+  top: 145px;
+  left: 714px;
+  width: 405px;
 `;
 
 const TitleBox = styled.div`

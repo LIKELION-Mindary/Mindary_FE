@@ -18,7 +18,7 @@ const Logo = styled.img`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 68px;
+  width: 72px;
   height: auto;
 `;
 
@@ -33,7 +33,7 @@ const Bar = styled.div`
   background-color: black;
   width: 100%;
   position: fixed;
-  height: 40px;
+  height: 52px;
   display: flex;
   justify-content: center;
   align-items: center;
