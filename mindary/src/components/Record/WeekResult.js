@@ -14,7 +14,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 422px;
+  width: 416px;
   border: 1px solid black;
 `;
 

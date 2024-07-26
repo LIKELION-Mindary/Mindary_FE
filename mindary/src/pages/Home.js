@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Header from "../components/Header/Header";
-import excel from "../assets/images/footerexcel.svg";
 import Navbar from "../components/Navbar/Navbar1";
+import FooterExcel from "../components/Background/FooterExcel";
 
 const Home = () => {
   return (
@@ -9,6 +9,7 @@ const Home = () => {
       <HeaderBase>
         <Header />
       </HeaderBase>
+      <FooterExcel />
       <Navbar />
       <Body>
         <LoginSection>
@@ -35,6 +36,10 @@ const Home = () => {
 };
 
 export default Home;
+const Homepage = styled.div`
+  width: 100%;
+  height: 100%;
+`;
 
 const Body = styled.div`
   width: 100%;
@@ -44,9 +49,6 @@ const Body = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-image: url(${excel});
-  background-size: contain;
-  background-repeat: no-repeat;
   position: fixed;
 `;
 

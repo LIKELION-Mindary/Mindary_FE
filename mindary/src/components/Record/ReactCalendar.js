@@ -4,22 +4,22 @@ import "react-calendar/dist/Calendar.css";
 import styled from "styled-components";
 import moment from "moment";
 
-const ReactCalendar = () => {
+const ReactCalendar = ({ onDateChange }) => {
   const [view, setView] = useState("month");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [sidebarVisible, setSidebarVisible] = useState(true);
 
   const handleDateClick = (date) => {
     setSelectedDate(date);
+    onDateChange(date);
   };
 
   const handleViewChange = ({ view }) => {
     setView(view);
-    setSidebarVisible(false);
+    setSidebarVisible(true);
   };
 
   const handleHeaderClick = (e) => {
-    e.stopPropagation();
     setSidebarVisible((prevVisible) => !prevVisible);
   };
 
@@ -34,7 +34,7 @@ const ReactCalendar = () => {
     const newDate = new Date(year, selectedDate.getMonth());
     setSelectedDate(newDate);
     setView("month");
-    setSidebarVisible(false);
+    setSidebarVisible(true);
   };
 
   const changeYear = (delta) => {
@@ -51,9 +51,13 @@ const ReactCalendar = () => {
     return (
       <Sidebar>
         <YearSelector>
-          <button onClick={() => changeYear(-1)}>{"<"}</button>
+          <button style={{ cursor: "pointer" }} onClick={() => changeYear(-1)}>
+            {"<"}
+          </button>
           <span>{currentYear}</span>
-          <button onClick={() => changeYear(1)}>{">"}</button>
+          <button style={{ cursor: "pointer" }} onClick={() => changeYear(1)}>
+            {">"}
+          </button>
         </YearSelector>
         <MonthSelector className="items">
           {months.map((month, index) => (
@@ -75,23 +79,15 @@ const ReactCalendar = () => {
       <StyledCalendarWrapper>
         <StyledCalendar
           formatMonthYear={(locale, date) => (
-            <>
-              <span
-                className="month-underline"
-                onClick={handleHeaderClick}
-                style={{ cursor: "pointer" }}
-              >
+            <DateText onClick={handleHeaderClick}>
+              <span className="month-underline">
                 {moment(date).format("MMMM")}
               </span>
-              ,{" "}
-              <span
-                className="year-underline"
-                onClick={handleHeaderClick}
-                style={{ cursor: "pointer" }}
-              >
+              ,&nbsp;
+              <span className="year-underline">
                 {moment(date).format("YYYY")}
               </span>
-            </>
+            </DateText>
           )}
           formatDay={(locale, date) => moment(date).format("D")}
           showNeighboringMonth={false}
@@ -121,6 +117,7 @@ const ReactCalendar = () => {
 };
 
 export default ReactCalendar;
+
 const Container = styled.div`
   display: flex;
   position: relative;
@@ -150,8 +147,8 @@ const StyledCalendarWrapper = styled.div`
     flex-direction: column;
     width: 100%;
     height: 100%;
-    max-width: 424px;
-    max-height: 213px;
+    max-width: 419px;
+    max-height: 211px;
     border: none;
     line-height: normal;
     background-color: transparent;
@@ -197,7 +194,7 @@ const StyledCalendarWrapper = styled.div`
     justify-content: center;
     background-color: #ebebeb;
     padding: 5px;
-    height: 30px;
+    height: 32px;
     border-bottom: 1px solid black;
     border-top: 1px solid black;
     border-left: 1px solid black;
@@ -251,8 +248,8 @@ const StyledCalendarWrapper = styled.div`
   }
 
   .react-calendar__month-view__days {
-    height: 152px;
-    width: 424px;
+    height: 155px;
+    width: 418px;
     background-color: white;
   }
 
@@ -290,7 +287,7 @@ const StyledCalendarWrapper = styled.div`
     flex: 0 0 calc(33.3333% - 10px) !important;
     border: none;
     height: 30px;
-    width: 133px;
+    width: 132px;
     padding: 5px;
     font-size: 0.9rem;
     font-weight: 600;
@@ -325,9 +322,9 @@ const Sidebar = styled.div`
   display: flex;
   flex-direction: column;
   position: fixed;
-  top: 70px;
-  left: 62px;
-  height: 396px;
+  top: 83px;
+  left: 60px;
+  height: 401px;
   width: 132px;
   background: transparent;
   border: 1px solid black;
@@ -335,7 +332,7 @@ const Sidebar = styled.div`
 
 const YearSelector = styled.div`
   display: flex;
-  height: 30px;
+  height: 31px;
   justify-content: center;
   align-items: center;
 
@@ -358,15 +355,15 @@ const MonthSelector = styled.div`
   flex-direction: column;
 
   .item {
-    height: 30.4px;
-    width: 131px;
+    height: 31px;
+    width: 130px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     &:hover {
       background: #f0f0f0;
-      border: 0.7px solid black;
+      border: 1px solid black;
       font-weight: 700;
       text-decoration: underline;
       cursor: pointer;
@@ -376,4 +373,14 @@ const MonthSelector = styled.div`
 
 export const StyledCalendar = styled(CalendarComponent)`
   width: 100%;
+  max-width: 420px; /* Ensure calendar width fits the container */
+  .react-calendar__month-view__days {
+    min-height: 186px; /* Ensure enough height for 6 weeks */
+  }
+`;
+
+export const DateText = styled.div`
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
 `;
