@@ -1,36 +1,148 @@
+import React, { useState } from "react";
 import CalendarComponent from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import styled from "styled-components";
 import moment from "moment";
 
 const ReactCalendar = () => {
-  const date = new Date();
-  const year = date.getFullYear();
+  const [view, setView] = useState("month");
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [sidebarVisible, setSidebarVisible] = useState(true);
+
+  const handleDateClick = (date) => {
+    setSelectedDate(date);
+  };
+
+  const handleViewChange = ({ view }) => {
+    setView(view);
+    setSidebarVisible(false);
+  };
+
+  const handleHeaderClick = (e) => {
+    e.stopPropagation();
+    setSidebarVisible((prevVisible) => !prevVisible);
+  };
+
+  const handleSidebarMonthClick = (monthIndex) => {
+    const newDate = new Date(moment(selectedDate).year(), monthIndex);
+    setSelectedDate(newDate);
+    setView("month");
+    setSidebarVisible(false);
+  };
+
+  const handleSidebarYearClick = (year) => {
+    const newDate = new Date(year, selectedDate.getMonth());
+    setSelectedDate(newDate);
+    setView("month");
+    setSidebarVisible(false);
+  };
+
+  const changeYear = (delta) => {
+    const newYear = selectedDate.getFullYear() + delta;
+    handleSidebarYearClick(newYear);
+  };
+
+  const renderSidebar = () => {
+    if (!sidebarVisible) return null;
+
+    const months = moment.months();
+    const currentYear = selectedDate.getFullYear();
+
+    return (
+      <Sidebar>
+        <YearSelector>
+          <button onClick={() => changeYear(-1)}>{"<"}</button>
+          <span>{currentYear}</span>
+          <button onClick={() => changeYear(1)}>{">"}</button>
+        </YearSelector>
+        <MonthSelector className="items">
+          {months.map((month, index) => (
+            <div
+              key={index}
+              className="item"
+              onClick={() => handleSidebarMonthClick(index)}
+            >
+              {month}
+            </div>
+          ))}
+        </MonthSelector>
+      </Sidebar>
+    );
+  };
+
   return (
-    <StyledCalendarWrapper>
-      <Title>CALENDAR</Title>
-      <StyledCalendar
-        formatMonthYear={(locale, date) => moment(date).format("MMMM, YYYY")}
-        formatDay={(locale, date) => moment(date).format("D")}
-        formatShortWeekday={(locale, date) =>
-          moment(date).format("dd").charAt(0)
-        } // Change weekday labels
-        showNeighboringMonth={false}
-        next2Label={null}
-        prev2Label={null}
-        minDetail="year"
-      />
-    </StyledCalendarWrapper>
+    <Container>
+      <StyledCalendarWrapper>
+        <StyledCalendar
+          formatMonthYear={(locale, date) => (
+            <>
+              <span
+                className="month-underline"
+                onClick={handleHeaderClick}
+                style={{ cursor: "pointer" }}
+              >
+                {moment(date).format("MMMM")}
+              </span>
+              ,{" "}
+              <span
+                className="year-underline"
+                onClick={handleHeaderClick}
+                style={{ cursor: "pointer" }}
+              >
+                {moment(date).format("YYYY")}
+              </span>
+            </>
+          )}
+          formatDay={(locale, date) => moment(date).format("D")}
+          showNeighboringMonth={false}
+          next2Label={null}
+          prev2Label={null}
+          minDetail="month"
+          tileClassName={({ date }) => {
+            if (moment(date).isSame(new Date(), "day")) {
+              return "react-calendar__tile--now";
+            }
+            if (moment(date).isSame(selectedDate, "day")) {
+              return "react-calendar__tile--active";
+            }
+            return null;
+          }}
+          value={selectedDate || new Date()}
+          view={view}
+          onClickDay={handleDateClick}
+          onActiveStartDateChange={handleViewChange}
+          prevLabel={<span className="hidden">&lt;</span>}
+          nextLabel={<span className="hidden">&gt;</span>}
+        />
+      </StyledCalendarWrapper>
+      {renderSidebar()}
+    </Container>
   );
 };
 
 export default ReactCalendar;
+const Container = styled.div`
+  display: flex;
+  position: relative;
+`;
 
-export const StyledCalendarWrapper = styled.div`
+const StyledCalendarWrapper = styled.div`
   display: flex;
   justify-content: center;
   position: relative;
   flex-direction: column;
+
+  .hidden {
+    display: none;
+  }
+
+  .month-underline {
+    text-decoration: underline;
+  }
+
+  .year-underline {
+    text-decoration: underline;
+  }
 
   .react-calendar {
     display: flex;
@@ -38,198 +150,230 @@ export const StyledCalendarWrapper = styled.div`
     flex-direction: column;
     width: 100%;
     height: 100%;
-    max-width: 663px;
-    max-height: 550px;
+    max-width: 424px;
+    max-height: 213px;
     border: none;
     line-height: normal;
-    background-color: white;
+    background-color: transparent;
   }
 
-  .react-calendar__tile.react-calendar__month-view__days__day.react-calendar__month-view__days__day--weekend
-  /* 전체 폰트 컬러 */
-  .react-calendar__month-view {
-    abbr {
-      color: ${(props) => props.theme.gray_1};
-    }
-  }
-
-  /* 네비게이션 가운데 정렬 */
   .react-calendar__navigation {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 30px;
+    margin-bottom: 2px;
   }
 
-  /* 네비게이션 폰트 설정 */
   .react-calendar__navigation button {
     font-weight: 800;
-    font-size: 52px;
+    font-size: 18px;
   }
 
-  /* 네비게이션 버튼 컬러 */
   .react-calendar__navigation button:focus {
-    background-color: white;
+    background-color: transparent;
   }
 
-  /* 네비게이션 비활성화 됐을때 스타일 */
   .react-calendar__navigation button:disabled {
-    background-color: white;
-    color: ${(props) => props.theme.darkBlack};
+    background-color: transparent;
+    color: black;
   }
 
-  /* 년/월 상단 네비게이션 칸 크기 줄이기 */
+  .react-calendar__viewContainer {
+    display: flex;
+  }
+
   .react-calendar__navigation__label {
     flex-grow: 0 !important;
   }
 
-  /* 요일 밑줄 제거 */
-  .react-calendar__month-view__weekdays abbr {
+  .react-calendar__month-view__weekdays__weekday abbr {
     text-decoration: none;
-    font-weight: 700;
-    font-size: 22px;
-    color: white;
   }
 
   .react-calendar__month-view__weekdays__weekday {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: black;
-    padding: 15px 10px;
+    background-color: #ebebeb;
+    padding: 5px;
+    height: 30px;
+    border-bottom: 1px solid black;
+    border-top: 1px solid black;
+    border-left: 1px solid black;
   }
 
-  .react-calendar__month-view__days__day--weekend {
-    color: black;
+  .react-calendar__tile.react-calendar__month-view__days__day {
+    flex: 0 0 14.5%;
+    overflow: hidden;
+    margin-inline-end: 0px;
   }
 
-  .react-calendar__tile--active:enabled:hover,
-  .react-calendar__tile--active:enabled:focus {
-    color: white;
+  .react-calendar__month-view__weekdays__weekday:last-child {
+    border-right: 1px solid black;
   }
-  /* 오늘 날짜 폰트 컬러 */
-  .react-calendar__tile--now {
-    background: none;
-    font-weight: 1000;
+
+  .react-calendar__month-view__days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
   }
 
   .react-calendar__tile {
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 6px;
+    position: relative;
+    font-size: 14px;
   }
 
-  /* 네비게이션 월 스타일 적용 */
+  .react-calendar__tile:nth-last-of-type(-n + 7) {
+  }
+
+  .react-calendar__tile--active:enabled:hover,
+  .react-calendar__tile--active:enabled:focus {
+    color: black;
+    font-weight: 900;
+  }
+
+  .react-calendar__tile--now {
+    font-weight: 900;
+    background-color: #f6fae6;
+  }
+
   .react-calendar__year-view__months__month {
-    border-radius: 0.8rem;
-    background-color: ${(props) => props.theme.gray_5};
+    background-color: transparent;
     padding: 0;
   }
 
   .react-calendar__month-view__days {
-    height: 440px;
-    width: 663px;
-    border: 1.5px solid black !important;
+    height: 152px;
+    width: 424px;
+    background-color: white;
   }
 
-  /* 네비게이션 현재 월 스타일 적용 */
   .react-calendar__tile--hasActive {
-    background-color: ${(props) => props.theme.gray_1};
-  }
-
-  /* 네비게이션 버튼 위치 조정 */
-  .react-calendar__navigation {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 25px;
+    background-color: transparent;
   }
 
   .react-calendar__navigation__arrow {
-    order: 2; /* Move the arrows to the right */
+    order: 2;
+  }
+
+  .react-calendar__month-view {
+    abbr {
+      color: black;
+    }
   }
 
   .react-calendar__navigation__label {
-    order: 1; /* Keep the month/year label at the left */
-    margin-right: auto;
-  }
-  /* 일 날짜 간격 */
-  .react-calendar__tile {
-    position: relative;
-    font-size: 20px;
-    border: 1px solid black;
+    order: 1;
   }
 
-  /* 네비게이션 월 스타일 적용 */
+  .react-calendar__tile {
+    position: relative;
+    font-size: 14px;
+  }
+
+  .react-calendar__year-view__months {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
   .react-calendar__year-view__months__month {
     flex: 0 0 calc(33.3333% - 10px) !important;
-    margin-inline-start: 5px !important;
-    margin-inline-end: 5px !important;
-    padding: 20px 6.6667px;
+    border: none;
+    height: 30px;
+    width: 133px;
+    padding: 5px;
     font-size: 0.9rem;
     font-weight: 600;
-    color: ${(props) => props.theme.gray_1};
+    color: black;
   }
+
+  .react-calendar__year-view .react-calendar__tile,
+  .react-calendar__decade-view .react-calendar__tile,
+  .react-calendar__century-view .react-calendar__tile {
+    padding: 10px;
+  }
+
+  .react-calendar__tile--now {
+    background-color: #f6fae6 !important;
+  }
+
+  .react-calendar__tile--active,
   .react-calendar__tile--active:enabled:hover,
   .react-calendar__tile--active:enabled:focus {
-    background-color: lightgrey;
+    background-color: transparent !important;
+    color: black !important;
   }
-  /* 선택한 날짜 스타일 적용 */
-  .react-calendar__tile:enabled:hover,
-  .react-calendar__tile:enabled:focus,
-  .react-calendar__tile--active {
-    background-color: lightgrey;
+
+  .react-calendar__tile--active.react-calendar__tile--now,
+  .react-calendar__tile--active:enabled:hover.react-calendar__tile--now,
+  .react-calendar__tile--active:enabled:focus.react-calendar__tile--now {
+    background-color: #f6fae6 !important;
+  }
+`;
+
+const Sidebar = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 70px;
+  left: 62px;
+  height: 396px;
+  width: 132px;
+  background: transparent;
+  border: 1px solid black;
+`;
+
+const YearSelector = styled.div`
+  display: flex;
+  height: 30px;
+  justify-content: center;
+  align-items: center;
+
+  button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  span {
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+`;
+
+const MonthSelector = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  .item {
+    height: 30.4px;
+    width: 131px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    &:hover {
+      background: #f0f0f0;
+      border: 0.7px solid black;
+      font-weight: 700;
+      text-decoration: underline;
+      cursor: pointer;
+    }
   }
 `;
 
 export const StyledCalendar = styled(CalendarComponent)`
-  width: 100%; /* 캘린더의 넓이를 부모 컴포넌트의 100%로 설정 */
-`;
-
-/* 오늘 버튼 스타일 */
-export const StyledDate = styled.div`
-  position: absolute;
-  right: 7%;
-  top: 6%;
-  background-color: ${(props) => props.theme.primary_3};
-  color: ${(props) => props.theme.yellow_2};
-  width: 18%;
-  min-width: fit-content;
-  height: 1.5rem;
-  text-align: center;
-  margin: 0 auto;
-  line-height: 1.6rem;
-  border-radius: 15px;
-  font-size: 0.8rem;
-  font-weight: 800;
-`;
-
-/* 오늘 날짜에 텍스트 삽입 스타일 */
-export const StyledToday = styled.div`
-  font-size: x-small;
-  color: ${(props) => props.theme.br_2};
-  font-weight: 600;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%);
-`;
-
-/* 출석한 날짜에 점 표시 스타일 */
-export const StyledDot = styled.div`
-  background-color: ${(props) => props.theme.br_2};
-  border-radius: 50%;
-  width: 0.3rem;
-  height: 0.3rem;
-  position: absolute;
-  top: 60%;
-  left: 50%;
-  transform: translateX(-50%);
-`;
-
-const Title = styled.span`
-  font-size: 24px;
-  font-weight: 700;
-  display: flex;
-  margin-bottom: 20px;
-  margin-left: 10px;
+  width: 100%;
 `;

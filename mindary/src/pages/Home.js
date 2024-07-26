@@ -1,12 +1,16 @@
 import styled from "styled-components";
-import Navbar from "../components/Navbar/Navbar";
+import Header from "../components/Header/Header";
+import excel from "../assets/images/footerexcel.svg";
+import Navbar from "../components/Navbar/Navbar1";
 
 const Home = () => {
   return (
     <>
+      <HeaderBase>
+        <Header />
+      </HeaderBase>
       <Navbar />
       <Body>
-        <Img src="path/to/your/image.jpg" alt="Background Image" />
         <LoginSection>
           <Title>로그인</Title>
           <Label htmlFor="email">이메일</Label>
@@ -34,46 +38,56 @@ export default Home;
 
 const Body = styled.div`
   width: 100%;
-  height: 100%;
   display: flex;
-  flex-direction: row;
+  margin-top: 40px;
+  height: 100%;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 100px;
-  padding: 20px;
-  box-sizing: border-box;
+  background-image: url(${excel});
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: fixed;
 `;
 
-const Img = styled.img`
-  width: 40%;
+const HeaderBase = styled.div`
+  display: flex;
+  width: 100%;
+  height: 40px;
+  justify-content: center;
+  position: fixed;
+  top: 0;
 `;
 
 const LoginSection = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 10px;
   border: none;
-  width: 345px;
+  width: 90%;
+  max-width: 345px;
+  background: rgba(255, 255, 255, 0.8); /* 반투명 배경 추가 */
+  border-radius: 8px; /* 테두리 반경 추가 */
 `;
 
 const Title = styled.h1`
-  margin-bottom: 60px;
-  font-size: 24px;
+  margin-bottom: 20px;
+  font-size: 20px;
 `;
 
 const Label = styled.label`
-  margin-bottom: 8px;
-  font-size: 16px;
+  margin-bottom: 4px;
+  font-size: 14px;
   align-self: flex-start;
 `;
 
 const EmailInput = styled.input`
-  width: 95%;
-  padding: 10px;
-  margin-bottom: 30px;
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 20px;
   border: none;
   border-bottom: 1px solid black;
-  font-size: 16px;
+  font-size: 14px;
   &::placeholder {
     color: #ccc;
   }
@@ -86,12 +100,12 @@ const LoginBtn = styled.button`
   color: white;
   border: none;
   width: 100%;
-  height: 62px;
+  height: 48px;
   padding: 10px 20px;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 16px;
-  margin-bottom: 15px;
+  font-size: 14px;
+  margin-bottom: 10px;
   transition: background-color 0.3s;
 
   &:hover {
@@ -104,9 +118,11 @@ const SelectBar = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 10px;
 
   & > * {
-    margin: 0 10px;
+    margin: 0 5px;
   }
 `;
 
@@ -114,7 +130,6 @@ const SearchId = styled.button`
   border: none;
   background-color: transparent;
   cursor: pointer;
-  font-size: 14px;
 `;
 
 const SearchPw = styled(SearchId)``;
@@ -124,8 +139,8 @@ const SimpleLoginWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 40px 0;
-  font-size: 16px;
+  margin: 20px 0;
+  font-size: 14px;
   color: #333;
 `;
 
@@ -136,19 +151,19 @@ const SimpleLogin = styled.span`
 const Line1 = styled.div`
   flex-grow: 1;
   border-bottom: 1px solid black;
-  margin-right: 15px;
+  margin-right: 10px;
 `;
 
 const Line2 = styled(Line1)`
-  margin-left: 15px;
+  margin-left: 10px;
 `;
 
 const KakaoBtn = styled.button`
   width: 100%;
-  height: 56px;
+  height: 48px;
   background-color: #feea00;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   border: none;
   cursor: pointer;
