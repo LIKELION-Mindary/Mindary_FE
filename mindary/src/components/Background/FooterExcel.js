@@ -41,10 +41,10 @@ const FooterExcel = () => {
           return (
             <ExcelRow key={rowIndex}>
               <Num>{rowIndex + 1}</Num>
-              <SectionA>&nbsp;학교명</SectionA>
-              <SectionB>&nbsp;팀명</SectionB>
-              <SectionC>&nbsp;서비스명</SectionC>
-              <SectionD>&nbsp;참여자</SectionD>
+              <SectionA>&nbsp; 학교명</SectionA>
+              <SectionB>&nbsp; 팀명</SectionB>
+              <SectionC>&nbsp; 서비스명</SectionC>
+              <SectionD>&nbsp; 참여자</SectionD>
               <SectionE />
               <SectionF />
               <SectionMode />
@@ -61,10 +61,10 @@ const FooterExcel = () => {
             <ExcelRow key={rowIndex}>
               <Num>{rowIndex + 1}</Num>
               <SectionA>&nbsp; 홍익대학교</SectionA>
-              <SectionB>&nbsp;mind on</SectionB>
-              <SectionC>&nbsp;Mindary</SectionC>
+              <SectionB>&nbsp; mind on</SectionB>
+              <SectionC>&nbsp; Mindary</SectionC>
               <SectionD1>
-                &nbsp;진예원 박소은 강민석 원채영 김태경 문덕영
+                &nbsp; 진예원 박소은 강민석 원채영 김태경 문덕영
               </SectionD1>
               <SectionMode />
               <SectionRecord />
@@ -117,6 +117,7 @@ const ExcelRow = styled.div`
 const SectionA = styled.div`
   display: flex;
   align-items: center;
+  font-weight: 700;
   color: #b3b3b3;
   font-size: 14px;
   width: 132px;
@@ -134,6 +135,8 @@ const Num = styled(SectionA)`
   width: 60px;
   display: flex;
   align-items: center;
+  font-size: 14px;
+  font-weight: 700;
   color: black;
   justify-content: center;
   background-color: #e6e6e6;
@@ -152,6 +155,7 @@ const SectionD1 = styled.div`
   align-items: center;
   color: #b3b3b3;
   font-size: 14px;
+  font-weight: 700;
   background-color: white;
   width: 414px;
   border-right: 1px solid rgba(0, 0, 0, 0.2);

@@ -12,7 +12,7 @@ const Navbar1 = () => {
       <SectionD>D</SectionD>
       <SectionE>E</SectionE>
       <SectionF>F</SectionF>
-      <SectionMode onClick={toggleTheme}>Mode:{theme.modeIcon}</SectionMode>
+      <SectionMode onClick={toggleTheme}>Mode : {theme.modeIcon}</SectionMode>
       <RecordSection>
         <Link to="/record">
           <SectionRecord>Record</SectionRecord>
@@ -48,6 +48,8 @@ const SectionA = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
   position: fixed;
   margin-left: 61px;
   width: 132px;
