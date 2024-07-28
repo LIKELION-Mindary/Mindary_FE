@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import styled from "styled-components";
+import styled, {
+  ThemeProvider as StyledThemeProvider,
+} from "styled-components";
 import ReactCalendar from "../components/Record/ReactCalendar";
 import Navbar from "../components/Navbar/Navbar";
 import Header from "../components/Header/Header";
@@ -8,33 +10,37 @@ import { Link } from "react-router-dom";
 import MonthResult from "../components/Record/MonthResult";
 import WeekResult from "../components/Record/WeekResult";
 import DefaultExcel from "../components/Background/DefaultExcel";
+import { useTheme } from "../styles/ThemeContext";
 
-const Calendar = ({ toggleTheme }) => {
+const Calendar = () => {
+  const { theme, toggleTheme } = useTheme();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
 
   return (
-    <Mainpage>
-      <HeaderBase>
-        <Header />
-      </HeaderBase>
-      <DefaultExcel />
-      <Navbar toggleTheme={toggleTheme} />
-      <Container>
-        <Content>
-          <CalendarBox>
-            <ReactCalendar onDateChange={handleDateChange} />
-            <Result>
-              <WeekResult />
-              <MonthResult />
-            </Result>
-          </CalendarBox>
-          <Diary selectedDate={selectedDate} />
-        </Content>
-      </Container>
-    </Mainpage>
+    <StyledThemeProvider theme={theme}>
+      <Mainpage>
+        <HeaderBase>
+          <Header />
+        </HeaderBase>
+        <DefaultExcel />
+        <Navbar toggleTheme={toggleTheme} />
+        <Container>
+          <Content>
+            <CalendarBox>
+              <ReactCalendar onDateChange={handleDateChange} />
+              <Result>
+                <WeekResult />
+                <MonthResult />
+              </Result>
+            </CalendarBox>
+            <Diary selectedDate={selectedDate} />
+          </Content>
+        </Container>
+      </Mainpage>
+    </StyledThemeProvider>
   );
 };
 

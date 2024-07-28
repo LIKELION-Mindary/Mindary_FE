@@ -20,6 +20,7 @@ const GlobalStyles = createGlobalStyle`
     }
     button {
         border: 0;
+        cursor: pointer;
         background: transparent;
     }
 `;

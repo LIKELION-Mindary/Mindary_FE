@@ -1,12 +1,16 @@
-import styled from "styled-components";
+import styled, {
+  ThemeProvider as StyledThemeProvider,
+} from "styled-components";
 import Header from "../components/Header/Header";
 import Navbar from "../components/Navbar/Navbar1";
 import FooterExcel from "../components/Background/FooterExcel";
 import { useState } from "react";
+import { useTheme } from "../styles/ThemeContext";
 
-const Home = ({ toggleTheme }) => {
+const Home = () => {
+  const { theme, toggleTheme } = useTheme();
   return (
-    <>
+    <StyledThemeProvider theme={theme}>
       <HeaderBase>
         <Header />
       </HeaderBase>
@@ -32,7 +36,7 @@ const Home = ({ toggleTheme }) => {
           <KakaoBtn>카카오로 로그인</KakaoBtn>
         </LoginSection>
       </Body>
-    </>
+    </StyledThemeProvider>
   );
 };
 
