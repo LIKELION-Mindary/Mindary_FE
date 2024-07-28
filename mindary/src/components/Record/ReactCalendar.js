@@ -239,7 +239,7 @@ const StyledCalendarWrapper = styled.div`
 
   .react-calendar__tile--now {
     font-weight: 900;
-    background-color: #f6fae6;
+    background-color: ${({ theme }) => theme.background};
   }
 
   .react-calendar__year-view__months__month {
@@ -301,7 +301,7 @@ const StyledCalendarWrapper = styled.div`
   }
 
   .react-calendar__tile--now {
-    background-color: #f6fae6 !important;
+    background-color: ${({ theme }) => theme.background} !important;
   }
 
   .react-calendar__tile--active,
@@ -314,7 +314,7 @@ const StyledCalendarWrapper = styled.div`
   .react-calendar__tile--active.react-calendar__tile--now,
   .react-calendar__tile--active:enabled:hover.react-calendar__tile--now,
   .react-calendar__tile--active:enabled:focus.react-calendar__tile--now {
-    background-color: #f6fae6 !important;
+    background-color: ${({ theme }) => theme.background} !important;
   }
 `;
 

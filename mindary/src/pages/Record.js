@@ -9,7 +9,7 @@ import MonthResult from "../components/Record/MonthResult";
 import WeekResult from "../components/Record/WeekResult";
 import DefaultExcel from "../components/Background/DefaultExcel";
 
-const Calendar = () => {
+const Calendar = ({ toggleTheme }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -21,7 +21,7 @@ const Calendar = () => {
         <Header />
       </HeaderBase>
       <DefaultExcel />
-      <Navbar />
+      <Navbar toggleTheme={toggleTheme} />
       <Container>
         <Content>
           <CalendarBox>
@@ -74,7 +74,7 @@ const Content = styled.div`
   align-content: center;
   justify-content: center;
   left: 134px;
-  top: 166px;
+  top: 197px;
   position: fixed;
 `;
 

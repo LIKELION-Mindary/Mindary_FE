@@ -13,9 +13,7 @@ const Diary = ({ selectedDate }) => {
   return (
     <Container>
       <TitleBox>
-        <Title>
-          {isMemo ? "DIARY" : moment(selectedDate).format("M월 D일 일지")}
-        </Title>
+        <Title>{moment(selectedDate).format("M월 D일 일지")}</Title>
         <Toggle isOn={isMemo} toggleHandler={handleToggle} />
       </TitleBox>
       <BodyContainer>
@@ -53,7 +51,7 @@ const Body = styled.div`
   align-items: center;
   border: 1.5px solid black;
   width: 383px;
-  height: 509px;
+  height: 478px;
   padding: 8px;
 `;
 
@@ -71,7 +69,7 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   position: fixed;
-  top: 145px;
+  top: 176px;
   left: 714px;
   width: 405px;
 `;

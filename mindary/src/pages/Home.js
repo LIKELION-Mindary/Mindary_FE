@@ -2,15 +2,16 @@ import styled from "styled-components";
 import Header from "../components/Header/Header";
 import Navbar from "../components/Navbar/Navbar1";
 import FooterExcel from "../components/Background/FooterExcel";
+import { useState } from "react";
 
-const Home = () => {
+const Home = ({ toggleTheme }) => {
   return (
     <>
       <HeaderBase>
         <Header />
       </HeaderBase>
       <FooterExcel />
-      <Navbar />
+      <Navbar toggleTheme={toggleTheme} />
       <Body>
         <LoginSection>
           <Title>로그인</Title>
@@ -68,8 +69,6 @@ const LoginSection = styled.div`
   border: none;
   width: 90%;
   max-width: 345px;
-  background: rgba(255, 255, 255, 0.8); /* 반투명 배경 추가 */
-  border-radius: 8px; /* 테두리 반경 추가 */
 `;
 
 const Title = styled.h1`

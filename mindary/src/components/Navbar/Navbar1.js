@@ -1,7 +1,14 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
-const Navbar1 = () => {
+const Navbar1 = ({ toggleTheme }) => {
+  const initial = "black";
+  const [theme, setTheme] = useState(initial);
+  const handleToggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "black" ? "green" : "black"));
+    toggleTheme();
+  };
   return (
     <Bar>
       <SectionA>A</SectionA>
@@ -10,7 +17,9 @@ const Navbar1 = () => {
       <SectionD>D</SectionD>
       <SectionE>E</SectionE>
       <SectionF>F</SectionF>
-      <SectionMode>Mode: ⚫</SectionMode>
+      <SectionMode onClick={handleToggleTheme}>
+        Mode: {theme === "green" ? "🟢" : "⚫"}
+      </SectionMode>
       <RecordSection>
         <Link to="/record">
           <SectionRecord>Record</SectionRecord>
