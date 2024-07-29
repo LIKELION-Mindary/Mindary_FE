@@ -6,13 +6,12 @@ import ReactCalendar from "../components/Record/ReactCalendar";
 import Navbar from "../components/Navbar/Navbar";
 import Header from "../components/Header/Header";
 import Diary from "../components/Record/Diary";
-import { Link } from "react-router-dom";
 import MonthResult from "../components/Record/MonthResult";
 import WeekResult from "../components/Record/WeekResult";
 import DefaultExcel from "../components/Background/DefaultExcel";
 import { useTheme } from "../styles/ThemeContext";
 
-const Calendar = () => {
+const Record = () => {
   const { theme, toggleTheme } = useTheme();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const handleDateChange = (date) => {
@@ -44,7 +43,7 @@ const Calendar = () => {
   );
 };
 
-export default Calendar;
+export default Record;
 
 const Mainpage = styled.div``;
 
@@ -80,7 +79,7 @@ const Content = styled.div`
   align-content: center;
   justify-content: center;
   left: 134px;
-  top: 197px;
+  top: 208px;
   position: fixed;
 `;
 

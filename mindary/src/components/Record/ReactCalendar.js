@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CalendarComponent from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import styled from "styled-components";
@@ -7,24 +7,29 @@ import moment from "moment";
 const ReactCalendar = ({ onDateChange }) => {
   const [view, setView] = useState("month");
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [activeStartDate, setActiveStartDate] = useState(new Date());
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [formattedDate, setFormattedDate] = useState(
+    moment(selectedDate).format("MMMM YYYY")
+  );
+
+  useEffect(() => {
+    setFormattedDate(moment(selectedDate).format("MMMM YYYY"));
+    setActiveStartDate(selectedDate);
+  }, [selectedDate]);
 
   const handleDateClick = (date) => {
-    setSelectedDate(date);
-    onDateChange(date);
+    const newDate = new Date(date);
+    setSelectedDate(newDate);
+    onDateChange(newDate);
   };
 
-  const handleViewChange = ({ view }) => {
-    setView(view);
-    setSidebarVisible(true);
-  };
-
-  const handleHeaderClick = (e) => {
+  const handleSidebarToggle = () => {
     setSidebarVisible((prevVisible) => !prevVisible);
   };
 
   const handleSidebarMonthClick = (monthIndex) => {
-    const newDate = new Date(moment(selectedDate).year(), monthIndex);
+    const newDate = new Date(selectedDate.getFullYear(), monthIndex);
     setSelectedDate(newDate);
     setView("month");
     setSidebarVisible(false);
@@ -51,13 +56,9 @@ const ReactCalendar = ({ onDateChange }) => {
     return (
       <Sidebar>
         <YearSelector>
-          <button style={{ cursor: "pointer" }} onClick={() => changeYear(-1)}>
-            {"<"}
-          </button>
+          <button onClick={() => changeYear(-1)}>{"<"}</button>
           <span>{currentYear}</span>
-          <button style={{ cursor: "pointer" }} onClick={() => changeYear(1)}>
-            {">"}
-          </button>
+          <button onClick={() => changeYear(1)}>{">"}</button>
         </YearSelector>
         <MonthSelector className="items">
           {months.map((month, index) => (
@@ -79,7 +80,7 @@ const ReactCalendar = ({ onDateChange }) => {
       <StyledCalendarWrapper>
         <StyledCalendar
           formatMonthYear={(locale, date) => (
-            <DateText onClick={handleHeaderClick}>
+            <DateText onClick={handleSidebarToggle}>
               <span className="month-underline">
                 {moment(date).format("MMMM")}
               </span>
@@ -103,13 +104,19 @@ const ReactCalendar = ({ onDateChange }) => {
             }
             return null;
           }}
-          value={selectedDate || new Date()}
+          value={selectedDate}
           view={view}
           onClickDay={handleDateClick}
-          onActiveStartDateChange={handleViewChange}
+          onActiveStartDateChange={({ activeStartDate }) =>
+            setActiveStartDate(activeStartDate)
+          }
+          activeStartDate={activeStartDate}
           prevLabel={<span className="hidden">&lt;</span>}
           nextLabel={<span className="hidden">&gt;</span>}
         />
+        <SidebarToggleButton onClick={handleSidebarToggle}>
+          {formattedDate}
+        </SidebarToggleButton>
       </StyledCalendarWrapper>
       {renderSidebar()}
     </Container>
@@ -117,7 +124,6 @@ const ReactCalendar = ({ onDateChange }) => {
 };
 
 export default ReactCalendar;
-
 const Container = styled.div`
   display: flex;
   position: relative;
@@ -328,6 +334,7 @@ const Sidebar = styled.div`
   width: 132px;
   background: transparent;
   border: 1px solid black;
+  z-index: 1000;
 `;
 
 const YearSelector = styled.div`
@@ -356,19 +363,30 @@ const MonthSelector = styled.div`
 
   .item {
     height: 31px;
-    width: 130px;
+    width: 132px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     &:hover {
-      background: #f0f0f0;
-      border: 1px solid black;
+      background-color: ${({ theme }) => theme.background};
       font-weight: 700;
       text-decoration: underline;
       cursor: pointer;
     }
   }
+`;
+
+const SidebarToggleButton = styled.button`
+  position: fixed;
+  top: 180px;
+  background: transparent;
+  color: black;
+  border: none;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 1000;
 `;
 
 export const StyledCalendar = styled(CalendarComponent)`
@@ -380,7 +398,7 @@ export const StyledCalendar = styled(CalendarComponent)`
 `;
 
 export const DateText = styled.div`
-  display: flex;
+  display: none;
   flex-direction: row;
   cursor: pointer;
 `;
