@@ -1,36 +1,87 @@
-import styled from "styled-components";
+import React, { useState } from "react";
+import styled, {
+  ThemeProvider as StyledThemeProvider,
+} from "styled-components";
 import Header from "../components/Header/Header";
-import excel from "../assets/images/footerexcel.svg";
 import Navbar from "../components/Navbar/Navbar1";
+import FooterExcel from "../components/Background/FooterExcel";
+import kakaobtn from "../assets/images/kakao_login.png";
+import { useTheme } from "../styles/ThemeContext";
+import SearchPw from "../components/Auth/SearchPw";
 
 const Home = () => {
+  const { theme, toggleTheme } = useTheme();
+  const [showSearchPw, setShowSearchPw] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleSearchPwClick = () => {
+    setShowSearchPw((prevShowSearchPw) => !prevShowSearchPw);
+  };
+
+  const handleLogin = () => {
+    const accountExists = false;
+
+    if (!accountExists) {
+      setErrorMessage("※ 존재하지 않는 계정입니다.");
+    } else {
+      setErrorMessage("");
+    }
+  };
+
   return (
-    <>
+    <StyledThemeProvider theme={theme}>
       <HeaderBase>
         <Header />
       </HeaderBase>
-      <Navbar />
+      <FooterExcel />
+      <Navbar toggleTheme={toggleTheme} />
       <Body>
-        <LoginSection>
-          <Title>로그인</Title>
-          <Label htmlFor="email">이메일</Label>
-          <EmailInput id="email" placeholder="이메일을 입력해주세요." />
-          <Label htmlFor="password">비밀번호</Label>
-          <PwInput id="password" placeholder="비밀번호를 입력해주세요." />
-          <LoginBtn>로그인</LoginBtn>
-          <SelectBar>
-            <SearchId>아이디 찾기</SearchId>|<SearchPw>비밀번호 찾기</SearchPw>|
-            <Signup>회원가입</Signup>
-          </SelectBar>
-          <SimpleLoginWrapper>
-            <Line1 />
-            <SimpleLogin>간편 로그인</SimpleLogin>
-            <Line2 />
-          </SimpleLoginWrapper>
-          <KakaoBtn>카카오로 로그인</KakaoBtn>
-        </LoginSection>
+        <LoginBody>
+          <LoginSection>
+            <Title>로그인</Title>
+            <InputSection>
+              <TitleSection>
+                <SubTitle>항목</SubTitle>
+                <Description>마인더리와 함께하는 마음 기록</Description>
+              </TitleSection>
+              <EmailSection>
+                <Label htmlFor="email">이메일</Label>
+                <EmailInput
+                  id="email"
+                  placeholder="이메일을 입력해주세요."
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </EmailSection>
+              <PwSection>
+                <Label htmlFor="password">비밀번호</Label>
+                <PwInput
+                  id="password"
+                  placeholder="비밀번호를 입력해주세요."
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </PwSection>
+              <SelectBar>
+                <Signup>회원가입</Signup>
+                <SearchPwbtn onClick={handleSearchPwClick}>
+                  비밀번호 찾기
+                </SearchPwbtn>
+                <LoginBtn onClick={handleLogin}>로그인</LoginBtn>
+              </SelectBar>
+              <SimpleLoginWrapper>
+                <SimpleLogin>간편 로그인</SimpleLogin>
+                <KakaoBtn />
+              </SimpleLoginWrapper>
+            </InputSection>
+            {showSearchPw && <SearchPw />}
+          </LoginSection>
+          {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+        </LoginBody>
       </Body>
-    </>
+    </StyledThemeProvider>
   );
 };
 
@@ -39,132 +90,186 @@ export default Home;
 const Body = styled.div`
   width: 100%;
   display: flex;
-  margin-top: 40px;
+  top: 52px;
   height: 100%;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-image: url(${excel});
-  background-size: contain;
-  background-repeat: no-repeat;
   position: fixed;
 `;
 
 const HeaderBase = styled.div`
   display: flex;
   width: 100%;
-  height: 40px;
+  height: 52px;
   justify-content: center;
   position: fixed;
   top: 0;
 `;
 
+const TitleSection = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  width: 315px;
+  border-bottom: 1px solid black;
+  background-color: ${({ theme }) => theme.background};
+`;
+
+const SubTitle = styled.span`
+  font-size: 16px;
+  font-weight: 700;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-right: 1px solid black;
+  width: 94px;
+`;
+const Description = styled.span`
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+  width: 216px;
+`;
+
 const LoginSection = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 10px;
   border: none;
-  width: 90%;
-  max-width: 345px;
-  background: rgba(255, 255, 255, 0.8); /* 반투명 배경 추가 */
-  border-radius: 8px; /* 테두리 반경 추가 */
+  width: 100%;
+  max-width: 317px;
+`;
+const InputSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  border: 1px solid black;
+  background-color: white;
+`;
+const EmailSection = styled.div`
+  display: flex;
+  border-bottom: 1px solid black;
+  height: 30px;
+  flex-direction: row;
 `;
 
+const PwSection = styled(EmailSection)``;
+
 const Title = styled.h1`
-  margin-bottom: 20px;
-  font-size: 20px;
+  display: flex;
+  font-size: 16px;
+  padding: 5px;
+  font-weight: 900;
 `;
 
 const Label = styled.label`
-  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid black;
   font-size: 14px;
-  align-self: flex-start;
+  width: 98px;
+  font-weight: 700;
 `;
 
 const EmailInput = styled.input`
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  width: 216px;
   border: none;
-  border-bottom: 1px solid black;
+  padding-left: 5px;
   font-size: 14px;
   &::placeholder {
-    color: #ccc;
+    color: #cccccc;
+    font-size: 16px;
+    font-weight: 700;
   }
 `;
 
 const PwInput = styled(EmailInput)``;
 
 const LoginBtn = styled.button`
-  background-color: black;
-  color: white;
-  border: none;
-  width: 100%;
-  height: 48px;
-  padding: 10px 20px;
-  border-radius: 4px;
+  height: 60px;
+  width: 106px;
+  color: black;
+  text-decoration: underline;
   cursor: pointer;
   font-size: 14px;
-  margin-bottom: 10px;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #333;
-  }
+  font-weight: 700;
 `;
 
 const SelectBar = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  font-size: 12px;
-  margin-bottom: 10px;
-
-  & > * {
-    margin: 0 5px;
-  }
+  border-bottom: 1px solid black;
+  height: 60px;
 `;
 
-const SearchId = styled.button`
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
+const SearchPwbtn = styled(LoginBtn)`
+  border-bottom: none;
+  border-right: 1px solid black;
+  text-decoration: transparent;
 `;
-
-const SearchPw = styled(SearchId)``;
-const Signup = styled(SearchId)``;
+const Signup = styled(LoginBtn)`
+  border-bottom: none;
+  width: 97px;
+  border-right: 1px solid black;
+  text-decoration: transparent;
+`;
 
 const SimpleLoginWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 20px 0;
   font-size: 14px;
-  color: #333;
 `;
 
-const SimpleLogin = styled.span`
-  flex-shrink: 0;
-`;
-
-const Line1 = styled.div`
-  flex-grow: 1;
-  border-bottom: 1px solid black;
-  margin-right: 10px;
-`;
-
-const Line2 = styled(Line1)`
-  margin-left: 10px;
-`;
-
-const KakaoBtn = styled.button`
+const SimpleLogin = styled(Label)`
+  height: 31px;
   width: 100%;
-  height: 48px;
-  background-color: #feea00;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 600;
+  max-width: 96px;
+`;
+
+const KakaoBtn = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: #fee500;
   border: none;
   cursor: pointer;
+
+  &::before {
+    content: "";
+    display: block;
+    width: 60%;
+    height: 100%;
+    background-image: url(${kakaobtn});
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+`;
+
+const ErrorMessage = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff0000;
+  font-size: 16px;
+  font-weight: 700;
+  height: 30px;
+  width: 183px;
+  margin-top: 60px;
+  padding-left: 60px;
+  text-align: center;
+`;
+
+const LoginBody = styled.div`
+  display: flex;
+  flex-direction: row;
 `;

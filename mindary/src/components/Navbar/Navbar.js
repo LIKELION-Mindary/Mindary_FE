@@ -1,25 +1,30 @@
+import { useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import logo from "../../assets/images/Logo.svg";
+import { useTheme } from "../../styles/ThemeContext";
 
 const Navbar = () => {
+  const { theme, toggleTheme } = useTheme();
   return (
     <Bar>
       <SectionA>A</SectionA>
       <SectionB>B</SectionB>
       <SectionC>C</SectionC>
       <SectionD>D</SectionD>
-      <SectionMode>Mode: ⚫</SectionMode>
+      <SectionMode onClick={toggleTheme}>Mode : {theme.modeIcon}</SectionMode>
       <RecordSection>
         <Link to="/record">
           <SectionRecord>Record</SectionRecord>
         </Link>
       </RecordSection>
+      <SectionNull />
       <ArchieveSection>
         <Link to="/archieve">
           <SectionArchieve>Archieve</SectionArchieve>
         </Link>
       </ArchieveSection>
+      <SectionNull1 />
+      <SectionNull2 />
     </Bar>
   );
 };
@@ -28,59 +33,81 @@ const Bar = styled.div`
   display: flex;
   align-items: center;
   position: fixed;
-  top: 40px;
+  top: 52px;
   font-size: 14px;
   font-weight: 400;
   width: 100%;
   height: 30px;
   color: black;
-  background-color: transparent;
   z-index: 1000;
 `;
 
 const SectionA = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 14px;
   position: fixed;
-  margin-left: 125px;
+  margin-left: 61px;
+  width: 132px;
 `;
 
-const SectionB = styled.div`
-  position: fixed;
-  margin-left: 400px;
+const SectionB = styled(SectionA)`
+  margin-left: 193px;
+  width: 416px;
 `;
 
-const SectionC = styled.div`
+const SectionC = styled(SectionA)`
   position: fixed;
-  margin-left: 665px;
+  margin-left: 610px;
+  width: 103px;
 `;
 
-const SectionD = styled.div`
+const SectionD = styled(SectionA)`
   position: fixed;
-  margin-left: 790px;
+  margin-left: 713px;
+  width: 137px;
 `;
 
-const SectionMode = styled.div`
-  position: fixed;
-  margin-left: 890px;
+const SectionMode = styled(SectionA)`
+  margin-left: 853px;
   cursor: pointer;
-  text-decoration: none;
-  box-shadow: inset 0 -1px 0 0 black;
-  padding-bottom: 2px;
+  width: 107px;
+  text-decoration: underline;
+  z-index: 1000;
 `;
 
-const SectionRecord = styled.div`
+const SectionRecord = styled(SectionA)`
   position: fixed;
-  margin-left: 1020px;
+  margin-left: 960px;
+  width: 133px;
+  z-index: 1000;
 `;
 
-const SectionArchieve = styled.div`
-  position: absolute;
-  margin-left: 1170px;
+const SectionNull = styled(SectionA)`
+  margin-left: 1088px;
+  width: 20px;
+`;
+
+const SectionNull1 = styled(SectionA)`
+  width: 40px;
+  margin-left: 1240px;
+`;
+
+const SectionNull2 = styled(SectionA)`
+  flex-grow: 1;
+`;
+
+const SectionArchieve = styled(SectionA)`
+  margin-left: 1113px;
+  width: 131px;
 `;
 
 const RecordSection = styled.div`
   font-size: 14px;
   display: flex;
-  top: 48px;
+  top: 60px;
   position: fixed;
   align-items: center;
   cursor: pointer;
