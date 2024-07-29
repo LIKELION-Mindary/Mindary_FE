@@ -1,15 +1,17 @@
+import { useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import logo from "../../assets/images/Logo.svg";
+import { useTheme } from "../../styles/ThemeContext";
 
 const Navbar = () => {
+  const { theme, toggleTheme } = useTheme();
   return (
     <Bar>
       <SectionA>A</SectionA>
       <SectionB>B</SectionB>
       <SectionC>C</SectionC>
       <SectionD>D</SectionD>
-      <SectionMode>Mode: ⚫</SectionMode>
+      <SectionMode onClick={toggleTheme}>Mode : {theme.modeIcon}</SectionMode>
       <RecordSection>
         <Link to="/record">
           <SectionRecord>Record</SectionRecord>
@@ -44,6 +46,8 @@ const SectionA = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  font-weight: 700;
+  font-size: 14px;
   position: fixed;
   margin-left: 61px;
   width: 132px;
@@ -71,12 +75,14 @@ const SectionMode = styled(SectionA)`
   cursor: pointer;
   width: 107px;
   text-decoration: underline;
+  z-index: 1000;
 `;
 
 const SectionRecord = styled(SectionA)`
   position: fixed;
   margin-left: 960px;
   width: 133px;
+  z-index: 1000;
 `;
 
 const SectionNull = styled(SectionA)`

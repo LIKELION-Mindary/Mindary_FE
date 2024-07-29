@@ -1,18 +1,21 @@
+import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Record from "./pages/Record";
 import Auth from "./components/Auth/Auth";
-
-function App() {
+import { ThemeProvider } from "./styles/ThemeContext";
+const App = () => {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/record" element={<Record />} />
-      </Routes>
+      <ThemeProvider>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/record" element={<Record />} />
+        </Routes>
+      </ThemeProvider>
     </BrowserRouter>
   );
-}
+};
 
 export default App;

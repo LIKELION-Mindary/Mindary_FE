@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-const MonthResult = () => {
+const MonthResult = ({}) => {
   const getMonthName = (date) => {
     return `${date.getMonth() + 1}월`;
   };
@@ -27,10 +27,13 @@ const MonthResult = () => {
   const reportMonth = isLastWeekOfMonth(today) ? currentMonth : previousMonth;
 
   return (
-    <Container>
-      <Title>{`${reportMonth}의 월말 결산 (매월 마지막주 업데이트)`}</Title>
-      <PdfBlock>{`${reportMonth} 월말 결산.pdf`}</PdfBlock>
-    </Container>
+    <Month>
+      <Container>
+        <Title>{`${reportMonth}의 월말 결산 (매월 마지막주 업데이트)`}</Title>
+        <PdfBlock>{`${reportMonth} 월말 결산.pdf`}</PdfBlock>
+      </Container>
+      <Detail>지난 결산들은 Archive 탭에서 확인 가능합니다.</Detail>
+    </Month>
   );
 };
 
@@ -50,7 +53,7 @@ const Title = styled.span`
   font-size: 16px;
   padding-left: 10px;
   border-bottom: 1px solid black;
-  background-color: #f6fae6;
+  background-color: ${({ theme }) => theme.background};
 `;
 
 const PdfBlock = styled.div`
@@ -59,6 +62,21 @@ const PdfBlock = styled.div`
   align-items: center;
   text-decoration: underline;
   height: 29px;
+`;
+const Detail = styled.div`
+  display: flex;
+  align-items: center;
+  width: 416px;
+  height: 30px;
+  font-size: 14px;
+  padding-left: 10px;
+  font-weight: 400;
+  color: #cccccc;
+`;
+
+const Month = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 export default MonthResult;

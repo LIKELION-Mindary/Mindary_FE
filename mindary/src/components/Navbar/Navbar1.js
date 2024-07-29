@@ -1,7 +1,9 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { useTheme } from "../../styles/ThemeContext";
 
 const Navbar1 = () => {
+  const { theme, toggleTheme } = useTheme();
   return (
     <Bar>
       <SectionA>A</SectionA>
@@ -10,7 +12,7 @@ const Navbar1 = () => {
       <SectionD>D</SectionD>
       <SectionE>E</SectionE>
       <SectionF>F</SectionF>
-      <SectionMode>Mode: ⚫</SectionMode>
+      <SectionMode onClick={toggleTheme}>Mode : {theme.modeIcon}</SectionMode>
       <RecordSection>
         <Link to="/record">
           <SectionRecord>Record</SectionRecord>
@@ -46,6 +48,8 @@ const SectionA = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
   position: fixed;
   margin-left: 61px;
   width: 132px;

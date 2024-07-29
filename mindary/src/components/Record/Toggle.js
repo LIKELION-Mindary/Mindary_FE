@@ -23,7 +23,7 @@ const ToggleContainer = styled.div`
   }
 
   .toggle-container.toggle--checked {
-    background-color: black;
+    background-color: #8a8a8a;
   }
 
   .toggle-circle {

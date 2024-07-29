@@ -82,6 +82,8 @@ const SectionB = styled(SectionA)`
 
 const Num = styled(SectionA)`
   width: 60px;
+  font-size: 14px;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;

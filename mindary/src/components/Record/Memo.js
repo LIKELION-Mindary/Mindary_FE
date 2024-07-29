@@ -70,7 +70,7 @@ const Body = styled.div`
   flex-direction: column;
   border: 1.5px solid black;
   width: 399px;
-  height: 525px;
+  height: 494px;
 `;
 
 const InputWrapper = styled.div`
@@ -97,7 +97,7 @@ const Input = styled.textarea`
 `;
 
 const Msg = styled.div`
-  height: 365px;
+  height: 371px;
   width: 100%;
   border: none;
   margin: 0;

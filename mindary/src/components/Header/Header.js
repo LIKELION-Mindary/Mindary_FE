@@ -30,7 +30,7 @@ const LogoContainer = styled.div`
 `;
 
 const Bar = styled.div`
-  background-color: black;
+  background-color: ${({ theme }) => theme.header};
   width: 100%;
   position: fixed;
   height: 52px;
