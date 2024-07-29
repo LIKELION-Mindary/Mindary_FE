@@ -46,7 +46,7 @@ const Container = styled.div`
   flex-direction: row;
   align-items: center;
   background-image: url(${excel});
-  background-size: contain;
+  background-size: cover;
   background-repeat: no-repeat;
   position: fixed;
 `;
