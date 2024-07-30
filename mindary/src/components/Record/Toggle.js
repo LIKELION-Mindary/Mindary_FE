@@ -18,7 +18,7 @@ const ToggleContainer = styled.div`
     background-color: transparent;
     display: flex; /* 자식 요소를 포함하는 Flex 컨테이너 */
     align-items: center; /* 자식 요소를 세로 중앙 정렬 */
-    padding: 2px; /* 토글 서클과 컨테이너 사이의 간격 */
+    padding-right: 2px; /* 토글 서클과 컨테이너 사이의 간격 */
     cursor: pointer;
   }
 
