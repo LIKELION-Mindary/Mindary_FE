@@ -41,15 +41,15 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 416px;
-  margin-top: 31px;
+  width: 342px;
+  margin-top: 29px;
   border: 1px solid black;
 `;
 
 const Title = styled.span`
   display: flex;
   align-items: center;
-  height: 30px;
+  height: 29px;
   font-size: 16px;
   padding-left: 10px;
   border-bottom: 1px solid black;
@@ -67,7 +67,7 @@ const Detail = styled.div`
   display: flex;
   align-items: center;
   width: 416px;
-  height: 30px;
+  height: 29px;
   font-size: 14px;
   padding-left: 10px;
   font-weight: 400;

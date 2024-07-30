@@ -1,3 +1,4 @@
+import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useTheme } from "../../styles/ThemeContext";
@@ -11,20 +12,19 @@ const Navbar1 = () => {
       <SectionC>C</SectionC>
       <SectionD>D</SectionD>
       <SectionE>E</SectionE>
-      <SectionF>F</SectionF>
-      <SectionMode onClick={toggleTheme}>Mode : {theme.modeIcon}</SectionMode>
       <RecordSection>
         <Link to="/record">
           <SectionRecord>Record</SectionRecord>
         </Link>
       </RecordSection>
-      <SectionNull />
       <ArchieveSection>
         <Link to="/archieve">
           <SectionArchieve>Archieve</SectionArchieve>
         </Link>
       </ArchieveSection>
-      <SectionNull1 />
+      <SectionF>F</SectionF>
+      <SectionMode onClick={toggleTheme}>Mode : {theme.modeIcon}</SectionMode>
+      <SectionLogout>Log Out</SectionLogout>
       <SectionNull2 />
     </Bar>
   );
@@ -34,76 +34,63 @@ const Bar = styled.div`
   display: flex;
   align-items: center;
   position: fixed;
-  top: 52px;
+  top: 52px; /* Navbar가 상단에 고정되도록 설정 */
+  left: 0;
   font-size: 14px;
   font-weight: 400;
   width: 100%;
-  height: 30px;
+  height: 29px; /* Navbar 높이 */
   color: black;
-  background-color: transparent;
-  z-index: 1000;
+  z-index: 1000; /* 다른 요소 위에 위치하도록 설정 */
 `;
 
-const SectionA = styled.div`
+const Section = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
   font-size: 14px;
-  position: fixed;
-  margin-left: 61px;
-  width: 132px;
+  font-weight: 400;
+  height: 100%;
+  color: #333;
 `;
 
-const SectionB = styled(SectionA)`
-  margin-left: 192px;
-  width: 133px;
+const SectionA = styled(Section)`
+  width: 122px;
+  margin-left: 46px;
 `;
 
-const SectionC = styled(SectionA)`
-  margin-left: 325px;
-  width: 106px;
+const SectionB = styled(Section)`
+  width: 120px;
 `;
 
-const SectionD = styled(SectionA)`
-  margin-left: 433px;
-  width: 98px;
+const SectionC = styled(Section)`
+  width: 226px;
 `;
 
-const SectionE = styled(SectionA)`
-  margin-left: 532px;
-  width: 216px;
-`;
-const SectionF = styled(SectionA)`
-  margin-left: 749px;
-  width: 98px;
+const SectionD = styled(Section)`
+  width: 119px;
 `;
 
-const SectionMode = styled(SectionA)`
-  margin-left: 848px;
-  width: 107px;
+const SectionE = styled(Section)`
+  width: 137px;
+`;
+
+const SectionF = styled(Section)`
+  width: 225px;
+`;
+
+const SectionMode = styled(Section)`
+  width: 119px;
   cursor: pointer;
   text-decoration: underline;
 `;
 
-const SectionRecord = styled(SectionA)`
-  margin-left: 956px;
-  width: 132px;
+const SectionRecord = styled(Section)`
+  width: 119px;
 `;
 
-const SectionNull = styled(SectionA)`
-  margin-left: 1088px;
-  width: 20px;
-`;
-
-const SectionArchieve = styled(SectionA)`
-  margin-left: 1109px;
-  width: 131px;
-`;
-
-const SectionNull1 = styled(SectionA)`
-  margin-left: 1240px;
-  width: 40px;
+const SectionArchieve = styled(Section)`
+  width: 119px;
 `;
 
 const RecordSection = styled.div`
@@ -111,16 +98,19 @@ const RecordSection = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  display: flex;
-  top: 60px;
-  position: fixed;
-  align-items: center;
+  height: 100%;
   cursor: pointer;
-  justify-content: center;
 `;
 
 const ArchieveSection = styled(RecordSection)``;
-const SectionNull2 = styled(SectionA)`
+
+const SectionNull2 = styled(Section)`
   flex-grow: 1;
+  border-right: none; /* 마지막 항목에는 오른쪽 경계선 없음 */
 `;
+
+const SectionLogout = styled(Section)`
+  width: 120px;
+`;
+
 export default Navbar1;

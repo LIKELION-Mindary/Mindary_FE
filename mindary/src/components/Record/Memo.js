@@ -69,8 +69,8 @@ const Body = styled.div`
   display: flex;
   flex-direction: column;
   border: 1.5px solid black;
-  width: 399px;
-  height: 494px;
+  width: 460px;
+  height: 478px;
 `;
 
 const InputWrapper = styled.div`
@@ -79,12 +79,12 @@ const InputWrapper = styled.div`
 `;
 
 const Input = styled.textarea`
-  width: 399px;
-  height: 90px;
+  width: 460px;
+  height: 89px;
   padding: 15px;
   display: flex;
   position: fixed;
-  top: 580px;
+  top: 562px;
   border: none;
   resize: none; /* 사용자가 크기를 조절하지 못하게 합니다. */
   box-sizing: border-box; /* padding과 border가 요소의 총 너비와 높이에 포함되도록 합니다. */
@@ -182,7 +182,7 @@ const TextBox = styled.div`
 const InputBtn = styled.button`
   position: absolute;
   bottom: 2px;
-  right: 2px;
+  right: 20px;
   width: 65px;
   height: 30px;
   font-size: 13px;

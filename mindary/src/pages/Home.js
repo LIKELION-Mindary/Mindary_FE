@@ -90,11 +90,10 @@ export default Home;
 const Body = styled.div`
   width: 100%;
   display: flex;
-  top: 52px;
   height: 100%;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  left: 510px;
+  top: 261px;
   position: fixed;
 `;
 
@@ -112,8 +111,8 @@ const TitleSection = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  height: 30px;
-  width: 315px;
+  height: 29px;
+  width: 374px;
   border-bottom: 1px solid black;
   background-color: ${({ theme }) => theme.background};
 `;
@@ -121,19 +120,19 @@ const TitleSection = styled.div`
 const SubTitle = styled.span`
   font-size: 16px;
   font-weight: 700;
-  height: 30px;
+  height: 29px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   border-right: 1px solid black;
-  width: 94px;
+  width: 118px;
 `;
 const Description = styled.span`
   font-size: 16px;
   font-weight: 700;
   text-align: center;
-  width: 216px;
+  width: 254px;
 `;
 
 const LoginSection = styled.div`
@@ -141,7 +140,7 @@ const LoginSection = styled.div`
   flex-direction: column;
   border: none;
   width: 100%;
-  max-width: 317px;
+  max-width: 376px;
 `;
 const InputSection = styled.div`
   display: flex;
@@ -152,7 +151,7 @@ const InputSection = styled.div`
 const EmailSection = styled.div`
   display: flex;
   border-bottom: 1px solid black;
-  height: 30px;
+  height: 29px;
   flex-direction: row;
 `;
 
@@ -171,14 +170,14 @@ const Label = styled.label`
   justify-content: center;
   border-right: 1px solid black;
   font-size: 14px;
-  width: 98px;
+  width: 118.5px;
   font-weight: 700;
 `;
 
 const EmailInput = styled.input`
   display: flex;
   align-items: center;
-  width: 216px;
+  width: 240.5px;
   border: none;
   padding-left: 5px;
   font-size: 14px;
@@ -193,7 +192,7 @@ const PwInput = styled(EmailInput)``;
 
 const LoginBtn = styled.button`
   height: 60px;
-  width: 106px;
+  width: 110px;
   color: black;
   text-decoration: underline;
   cursor: pointer;
@@ -213,10 +212,11 @@ const SearchPwbtn = styled(LoginBtn)`
   border-bottom: none;
   border-right: 1px solid black;
   text-decoration: transparent;
+  width: 137px;
 `;
 const Signup = styled(LoginBtn)`
   border-bottom: none;
-  width: 97px;
+  width: 119.5px;
   border-right: 1px solid black;
   text-decoration: transparent;
 `;
@@ -229,15 +229,16 @@ const SimpleLoginWrapper = styled.div`
 `;
 
 const SimpleLogin = styled(Label)`
-  height: 31px;
+  height: 29px;
   width: 100%;
-  max-width: 96px;
+  max-width: 118.5px;
 `;
 
 const KakaoBtn = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  max-width: 337px;
   width: 100%;
   height: 100%;
   background-color: #fee500;
@@ -247,7 +248,7 @@ const KakaoBtn = styled.div`
   &::before {
     content: "";
     display: block;
-    width: 60%;
+    width: 50%;
     height: 100%;
     background-image: url(${kakaobtn});
     background-repeat: no-repeat;
@@ -262,10 +263,10 @@ const ErrorMessage = styled.div`
   color: #ff0000;
   font-size: 16px;
   font-weight: 700;
-  height: 30px;
+  height: 29px;
   width: 183px;
   margin-top: 60px;
-  padding-left: 60px;
+  padding-left: 10px;
   text-align: center;
 `;
 
