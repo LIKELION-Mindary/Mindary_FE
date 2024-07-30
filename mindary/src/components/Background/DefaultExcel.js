@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import styled from "styled-components";
 
 const DefaultExcel = () => {
   const [rows, setRows] = useState([]);
+  const rowRefs = useRef([]);
+  const lastVisibleRowIndex = useRef(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -17,6 +19,51 @@ const DefaultExcel = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        let visibleRows = [];
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            visibleRows.push(entry.target);
+          }
+        });
+
+        if (visibleRows.length > 0) {
+          const lastRow = visibleRows[visibleRows.length - 1];
+          const lastRowIndex = rowRefs.current.indexOf(lastRow);
+
+          if (
+            lastVisibleRowIndex.current !== null &&
+            rowRefs.current[lastVisibleRowIndex.current]
+          ) {
+            rowRefs.current[lastVisibleRowIndex.current].style.backgroundColor =
+              "";
+          }
+
+          lastRow.style.backgroundColor = "#e6e6e6";
+          lastVisibleRowIndex.current = lastRowIndex;
+        }
+      },
+      { threshold: 0 }
+    );
+
+    rowRefs.current.forEach((ref) => {
+      if (ref) {
+        observer.observe(ref);
+      }
+    });
+
+    return () => {
+      if (
+        lastVisibleRowIndex.current !== null &&
+        rowRefs.current[lastVisibleRowIndex.current]
+      ) {
+        rowRefs.current[lastVisibleRowIndex.current].style.backgroundColor = "";
+      }
+      observer.disconnect();
+    };
+  }, [rows]);
   return (
     <ExcelBody>
       <Index>
@@ -25,25 +72,27 @@ const DefaultExcel = () => {
         <IndexB />
         <IndexC />
         <IndexD />
-        <IndexMode />
+        <IndexE />
         <IndexRecord />
-        <IndexNull1 />
         <IndexArchieve />
-        <IndexNull2 />
+        <IndexF />
+        <IndexMode />
+        <IndexLogout />
         <IndexNull3 />
       </Index>
       {rows.map((_, rowIndex) => (
-        <ExcelRow key={rowIndex}>
+        <ExcelRow key={rowIndex} ref={(el) => (rowRefs.current[rowIndex] = el)}>
           <Num>{rowIndex + 1}</Num>
           <SectionA />
           <SectionB />
           <SectionC />
           <SectionD />
-          <SectionMode />
+          <SectionE />
           <SectionRecord />
-          <SectionNull1 />
           <SectionArchieve />
-          <SectionNull2 />
+          <SectionF />
+          <SectionMode />
+          <SectionLogout />
           <SectionNull3 />
         </ExcelRow>
       ))}
@@ -59,6 +108,7 @@ const ExcelBody = styled.div`
   width: 100%;
   height: 100%;
   top: 52px;
+  left: 0;
 `;
 
 const ExcelRow = styled.div`
@@ -67,58 +117,66 @@ const ExcelRow = styled.div`
   width: 100%;
 `;
 
-const SectionA = styled.div`
-  width: 132px;
-  height: 30px;
+const Section = styled.div`
+  display: flex;
+  align-items: center;
+  font-weight: 400;
   font-size: 14px;
-  border-right: 1px solid rgb(0, 0, 0, 0.2);
-  border-bottom: 1px solid rgb(0, 0, 0, 0.2);
-  background-color: white;
+  height: 29px; /* Adjust height */
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 `;
 
-const SectionB = styled(SectionA)`
-  width: 416px;
+const SectionA = styled(Section)`
+  width: 121px;
 `;
 
-const Num = styled(SectionA)`
-  width: 60px;
-  font-size: 14px;
-  font-weight: 700;
+const SectionB = styled(Section)`
+  width: 119px;
+`;
+
+const Num = styled(Section)`
+  width: 46px;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #e6e6e6;
 `;
 
-const SectionC = styled(SectionA)`
-  width: 103px;
+const SectionC = styled(Section)`
+  width: 225px;
 `;
 
-const SectionD = styled(SectionA)`
+const SectionD = styled(Section)`
+  width: 119px;
+`;
+
+const SectionMode = styled(Section)`
+  width: 119px;
+`;
+
+const SectionRecord = styled(Section)`
+  width: 119px;
+`;
+
+const SectionArchieve = styled(Section)`
+  width: 119px;
+`;
+
+const SectionNull3 = styled(Section)`
+  flex-grow: 1;
+`;
+
+const SectionE = styled(Section)`
   width: 137px;
 `;
 
-const SectionMode = styled(SectionA)`
-  width: 108px;
+const SectionF = styled(Section)`
+  width: 225px;
 `;
 
-const SectionRecord = styled(SectionA)`
-  width: 132px;
-`;
-
-const SectionNull1 = styled(SectionA)`
-  width: 20px;
-`;
-
-const SectionArchieve = styled(SectionA)`
-  width: 132px;
-`;
-
-const SectionNull2 = styled(SectionA)`
-  width: 40px;
-`;
-const SectionNull3 = styled(SectionA)`
-  flex-grow: 1;
+const SectionLogout = styled(Section)`
+  width: 120px;
 `;
 
 const Indexnum = styled(Num)``;
@@ -144,13 +202,7 @@ const IndexMode = styled(SectionMode)`
 const IndexRecord = styled(SectionRecord)`
   background-color: #e6e6e6;
 `;
-const IndexNull1 = styled(SectionNull1)`
-  background-color: #e6e6e6;
-`;
 const IndexArchieve = styled(SectionArchieve)`
-  background-color: #e6e6e6;
-`;
-const IndexNull2 = styled(SectionNull2)`
   background-color: #e6e6e6;
 `;
 const IndexNull3 = styled(SectionNull3)`
@@ -161,4 +213,16 @@ const Index = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
+`;
+
+const IndexE = styled(SectionE)`
+  background-color: #e6e6e6;
+`;
+
+const IndexF = styled(SectionF)`
+  background-color: #e6e6e6;
+`;
+
+const IndexLogout = styled(SectionLogout)`
+  background-color: #e6e6e6;
 `;

@@ -153,8 +153,8 @@ const StyledCalendarWrapper = styled.div`
     flex-direction: column;
     width: 100%;
     height: 100%;
-    max-width: 419px;
-    max-height: 211px;
+    max-width: 348px;
+    max-height: 151px;
     border: none;
     line-height: normal;
     background-color: transparent;
@@ -164,8 +164,7 @@ const StyledCalendarWrapper = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 30px;
-    margin-bottom: 2px;
+    height: 29px;
   }
 
   .react-calendar__navigation button {
@@ -199,8 +198,7 @@ const StyledCalendarWrapper = styled.div`
     align-items: center;
     justify-content: center;
     background-color: #ebebeb;
-    padding: 5px;
-    height: 32px;
+    height: 29px;
     border-bottom: 1px solid black;
     border-top: 1px solid black;
     border-left: 1px solid black;
@@ -229,9 +227,9 @@ const StyledCalendarWrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 6px;
     position: relative;
     font-size: 14px;
+    height: 29px;
   }
 
   .react-calendar__tile:nth-last-of-type(-n + 7) {
@@ -254,8 +252,8 @@ const StyledCalendarWrapper = styled.div`
   }
 
   .react-calendar__month-view__days {
-    height: 155px;
-    width: 418px;
+    height: 151px;
+    width: 344px;
     background-color: white;
   }
 
@@ -292,9 +290,8 @@ const StyledCalendarWrapper = styled.div`
   .react-calendar__year-view__months__month {
     flex: 0 0 calc(33.3333% - 10px) !important;
     border: none;
-    height: 30px;
-    width: 132px;
-    padding: 5px;
+    height: 29px;
+    width: 119px;
     font-size: 0.9rem;
     font-weight: 600;
     color: black;
@@ -303,7 +300,6 @@ const StyledCalendarWrapper = styled.div`
   .react-calendar__year-view .react-calendar__tile,
   .react-calendar__decade-view .react-calendar__tile,
   .react-calendar__century-view .react-calendar__tile {
-    padding: 10px;
   }
 
   .react-calendar__tile--now {
@@ -328,10 +324,10 @@ const Sidebar = styled.div`
   display: flex;
   flex-direction: column;
   position: fixed;
-  top: 83px;
-  left: 60px;
-  height: 401px;
-  width: 132px;
+  top: 82px;
+  left: 168px;
+  height: 388px;
+  width: 118px;
   background: transparent;
   border: 1px solid black;
   z-index: 1000;
@@ -362,8 +358,8 @@ const MonthSelector = styled.div`
   flex-direction: column;
 
   .item {
-    height: 31px;
-    width: 132px;
+    height: 30px;
+    width: 117px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -379,7 +375,7 @@ const MonthSelector = styled.div`
 
 const SidebarToggleButton = styled.button`
   position: fixed;
-  top: 180px;
+  top: 174px;
   background: transparent;
   color: black;
   border: none;
@@ -391,9 +387,9 @@ const SidebarToggleButton = styled.button`
 
 export const StyledCalendar = styled(CalendarComponent)`
   width: 100%;
-  max-width: 420px; /* Ensure calendar width fits the container */
+  max-width: 350px; /* Ensure calendar width fits the container */
   .react-calendar__month-view__days {
-    min-height: 186px; /* Ensure enough height for 6 weeks */
+    min-height: 150px; /* Ensure enough height for 6 weeks */
   }
 `;
 

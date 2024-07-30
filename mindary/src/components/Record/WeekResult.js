@@ -14,14 +14,14 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 416px;
+  width: 342px;
   border: 1px solid black;
 `;
 
 const Title = styled.span`
   display: flex;
   align-items: center;
-  height: 30px;
+  height: 29px;
   font-size: 16px;
   padding-left: 10px;
   border-bottom: 1px solid black;

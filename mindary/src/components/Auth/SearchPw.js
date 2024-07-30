@@ -10,7 +10,7 @@ const SearchPw = () => {
         </TitleSection>
         <EmailSection>
           <Label htmlFor="email">이메일</Label>
-          <EmailInput id="email" placeholder="이메일을 입력해주세요." />
+          <EmailInput id="email" placeholder="hongik@hongik.ac.kr" />
         </EmailSection>
         <SendEmail> 임시 비밀번호 받기 </SendEmail>
       </SearchBox>
@@ -22,7 +22,7 @@ export default SearchPw;
 
 const Wrapper = styled.div`
   display: flex;
-  width: 315px;
+  width: 376px;
   flex-direction: column;
   margin-top: 90px;
 `;
@@ -45,8 +45,8 @@ const TitleSection = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  height: 30px;
-  width: 313px;
+  height: 29px;
+  width: 374px;
   border-bottom: 1px solid black;
   background-color: #dddddd;
 `;
@@ -54,24 +54,24 @@ const TitleSection = styled.div`
 const SubTitle = styled.span`
   font-size: 16px;
   font-weight: 700;
-  height: 30px;
+  height: 29px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   border-right: 1px solid black;
-  width: 96px;
+  width: 118px;
 `;
 const Description = styled.span`
   font-size: 16px;
   font-weight: 700;
   text-align: center;
-  width: 216px;
+  width: 254px;
 `;
 const EmailSection = styled.div`
   display: flex;
   border-bottom: 1px solid black;
-  height: 30px;
+  height: 29px;
   flex-direction: row;
 `;
 
@@ -81,7 +81,7 @@ const Label = styled.label`
   justify-content: center;
   border-right: 1px solid black;
   font-size: 14px;
-  width: 96px;
+  width: 118.5px;
   font-weight: 700;
 `;
 
@@ -95,13 +95,13 @@ const EmailInput = styled.input`
   &::placeholder {
     color: #cccccc;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
   }
 `;
 
 const SendEmail = styled.button`
   border: none;
   text-decoration: underline;
-  background-color: transparent;
-  height: 30px;
+  background-color: white;
+  height: 28px;
 `;

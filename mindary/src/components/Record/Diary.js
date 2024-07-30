@@ -50,8 +50,8 @@ const Body = styled.div`
   justify-content: center;
   align-items: center;
   border: 1.5px solid black;
-  width: 383px;
-  height: 478px;
+  width: 444px;
+  height: 462px;
   padding: 8px;
 `;
 
@@ -69,9 +69,9 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   position: fixed;
-  top: 176px;
-  left: 714px;
-  width: 405px;
+  top: 171px;
+  left: 767px;
+  width: 480px;
 `;
 
 const TitleBox = styled.div`

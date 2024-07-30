@@ -20,6 +20,7 @@ const Logo = styled.img`
   justify-content: center;
   width: 72px;
   height: auto;
+  z-index: 1000;
 `;
 
 const LogoContainer = styled.div`

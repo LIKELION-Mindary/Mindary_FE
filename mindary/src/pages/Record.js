@@ -3,7 +3,7 @@ import styled, {
   ThemeProvider as StyledThemeProvider,
 } from "styled-components";
 import ReactCalendar from "../components/Record/ReactCalendar";
-import Navbar from "../components/Navbar/Navbar";
+import Navbar from "../components/Navbar/Navbar1";
 import Header from "../components/Header/Header";
 import Diary from "../components/Record/Diary";
 import MonthResult from "../components/Record/MonthResult";
@@ -50,7 +50,6 @@ const Mainpage = styled.div``;
 const Container = styled.div`
   width: 100%;
   display: flex;
-  margin-top: 40px;
   height: 100%;
   flex-direction: row;
   align-items: center;
@@ -63,9 +62,8 @@ const Container = styled.div`
 const CalendarBox = styled.div`
   display: flex;
   flex-direction: column;
-  margin-left: 59px;
   margin-right: 105px;
-  width: 424px;
+  width: 425px;
   height: 501px;
 `;
 
@@ -81,15 +79,15 @@ const Content = styled.div`
   flex-direction: row;
   align-content: center;
   justify-content: center;
-  left: 134px;
-  top: 208px;
+  left: 287px;
+  top: 207px;
   position: fixed;
 `;
 
 const Result = styled.div`
   display: flex;
   position: fixed;
-  top: 516px;
+  top: 501px;
   width: 417px;
   height: 150px;
   flex-direction: column;
