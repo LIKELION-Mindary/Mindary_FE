@@ -1,10 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useTheme } from "../../styles/ThemeContext";
+import { axiosInstance } from "../../api/api";
+import { useNavigate } from "react-router-dom";
 
 const Navbar1 = () => {
   const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem("isLoggedIn") === "true"
+  );
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.post(
+        "/mindary/accounts/kakao/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.setItem("isLoggedIn", "false");
+      setIsLoggedIn(false);
+      navigate("/");
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
+
   return (
     <Bar>
       <SectionA>A</SectionA>
@@ -24,7 +51,7 @@ const Navbar1 = () => {
       </ArchieveSection>
       <SectionF>F</SectionF>
       <SectionMode onClick={toggleTheme}>Mode : {theme.modeIcon}</SectionMode>
-      <SectionLogout>Log Out</SectionLogout>
+      <SectionLogout onClick={handleLogout}>Log Out</SectionLogout>
       <SectionNull2 />
     </Bar>
   );
@@ -111,6 +138,8 @@ const SectionNull2 = styled(Section)`
 
 const SectionLogout = styled(Section)`
   width: 120px;
+  cursor: pointer;
+  z-index: 1000;
 `;
 
 export default Navbar1;
