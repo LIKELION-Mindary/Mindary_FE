@@ -4,7 +4,7 @@ import styled, {
 } from "styled-components";
 import Header from "../components/Header/Header";
 import Navbar from "../components/Navbar/Navbar1";
-import FooterExcel from "../components/Background/FooterExcel";
+import DefaultExcel from "../components/Background/DefaultExcel";
 import kakaobtn from "../assets/images/kakao_login.png";
 import { useTheme } from "../styles/ThemeContext";
 import SearchPw from "../components/Auth/SearchPw";
@@ -35,7 +35,7 @@ const Home = () => {
       <HeaderBase>
         <Header />
       </HeaderBase>
-      <FooterExcel />
+      <DefaultExcel />
       <Navbar toggleTheme={toggleTheme} />
       <Body>
         <LoginBody>
@@ -177,7 +177,7 @@ const Label = styled.label`
 const EmailInput = styled.input`
   display: flex;
   align-items: center;
-  width: 240.5px;
+  width: 248px;
   border: none;
   padding-left: 5px;
   font-size: 14px;
@@ -186,17 +186,23 @@ const EmailInput = styled.input`
     font-size: 16px;
     font-weight: 700;
   }
+
+  &:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px white inset !important;
+    box-shadow: 0 0 0 1000px white inset !important;
+  }
 `;
 
 const PwInput = styled(EmailInput)``;
 
 const LoginBtn = styled.button`
   height: 60px;
-  width: 110px;
+  width: 119px;
   color: black;
   text-decoration: underline;
   cursor: pointer;
   font-size: 14px;
+  background-color: #efefef;
   font-weight: 700;
 `;
 
@@ -211,14 +217,14 @@ const SelectBar = styled.div`
 const SearchPwbtn = styled(LoginBtn)`
   border-bottom: none;
   border-right: 1px solid black;
-  text-decoration: transparent;
+  background-color: transparent;
   width: 137px;
 `;
 const Signup = styled(LoginBtn)`
   border-bottom: none;
-  width: 119.5px;
+  width: 120.5px;
   border-right: 1px solid black;
-  text-decoration: transparent;
+  background-color: transparent;
 `;
 
 const SimpleLoginWrapper = styled.div`

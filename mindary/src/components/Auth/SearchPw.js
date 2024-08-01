@@ -1,5 +1,17 @@
 import styled from "styled-components";
+import { useState } from "react";
 const SearchPw = () => {
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleLogin = () => {
+    const accountExists = false;
+
+    if (!accountExists) {
+      setErrorMessage("※ 존재하지 않는 계정입니다.");
+    } else {
+      setErrorMessage("");
+    }
+  };
   return (
     <Wrapper>
       <Title>비밀번호 찾기</Title>
@@ -12,8 +24,9 @@ const SearchPw = () => {
           <Label htmlFor="email">이메일</Label>
           <EmailInput id="email" placeholder="hongik@hongik.ac.kr" />
         </EmailSection>
-        <SendEmail> 임시 비밀번호 받기 </SendEmail>
+        <SendEmail> 새 비밀번호 받기 </SendEmail>
       </SearchBox>
+      {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
     </Wrapper>
   );
 };
@@ -97,6 +110,11 @@ const EmailInput = styled.input`
     font-size: 16px;
     font-weight: 600;
   }
+
+  &:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px white inset !important;
+    box-shadow: 0 0 0 1000px white inset !important;
+  }
 `;
 
 const SendEmail = styled.button`
@@ -104,4 +122,19 @@ const SendEmail = styled.button`
   text-decoration: underline;
   background-color: white;
   height: 28px;
+  font-weight: 700;
+`;
+
+const ErrorMessage = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff0000;
+  font-size: 16px;
+  font-weight: 700;
+  height: 29px;
+  width: 183px;
+  margin-top: 60px;
+  padding-left: 10px;
+  text-align: center;
 `;
