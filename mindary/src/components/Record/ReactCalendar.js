@@ -197,7 +197,7 @@ const StyledCalendarWrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #ebebeb;
+    background-color: #f4f4f4;
     height: 29px;
     border-bottom: 1px solid black;
     border-top: 1px solid black;

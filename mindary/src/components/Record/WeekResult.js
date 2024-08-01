@@ -25,7 +25,7 @@ const Title = styled.span`
   font-size: 16px;
   padding-left: 10px;
   border-bottom: 1px solid black;
-  background-color: #e6e6e6;
+  background-color: #f4f4f4;
 `;
 
 const PdfBlock = styled.div`
