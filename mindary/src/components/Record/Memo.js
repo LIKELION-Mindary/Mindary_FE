@@ -69,8 +69,17 @@ const Memo = () => {
       <Msg>
         {messages.map((msg, index) => (
           <Message key={index}>
-            <Time>{msg.time}</Time>
+            <TimeSection>
+              <Time>{msg.time}</Time>
+              <Null />
+              <Null1 />
+            </TimeSection>
             <TextBox height={msg.height}>{msg.text}</TextBox>
+            <SpaceSection>
+              <Space />
+              <Space1 />
+              <Space2 />
+            </SpaceSection>
           </Message>
         ))}
       </Msg>
@@ -131,6 +140,7 @@ const Msg = styled.div`
   width: 100%;
   border: none;
   margin: 0;
+  background-color: white;
   overflow-x: hidden;
   overflow-y: auto;
   padding-bottom: 20px; /* 버튼에 의해 내용이 가려지지 않도록 여유 공간을 둡니다 */
@@ -151,11 +161,12 @@ const Msg = styled.div`
 `;
 
 const Time = styled.div`
-  width: 100%;
+  width: 117.5px;
   display: flex;
   align-items: center;
   height: 30px;
   font-size: 14px;
+  font-weight: 700;
   background-color: transparent;
   padding-left: 10px;
   box-sizing: border-box;
@@ -171,12 +182,11 @@ const TextBox = styled.div`
   display: flex;
   align-items: center;
   padding-left: 10px;
+  border-bottom: 1px solid #cccccc;
   font-size: 14px;
   font-weight: 400;
-  border-bottom: 1px solid #cccccc;
   width: 100%;
   background-color: white;
-  margin-bottom: 30px; /* 메시지 간의 간격 */
   height: ${(props) => props.height}px; /* 동적으로 높이 설정 */
   box-sizing: border-box; /* 높이 계산에 패딩과 보더를 포함 */
   white-space: pre-wrap; /* 줄바꿈 문자와 공백을 그대로 유지 */
@@ -208,4 +218,41 @@ const BtnContent = styled.div`
   height: 28px;
   display: flex;
   justify-content: flex-end;
+`;
+
+const SpaceSection = styled.div`
+  display: flex;
+  height: 30px;
+  flex-direction: row;
+  width: 100%;
+  border-bottom: 1px solid #cccccc;
+`;
+
+const TimeSection = styled(SpaceSection)`
+  border-bottom: 1px solid #cccccc;
+  height: 29.5px;
+  box-sizing: border-box;
+`;
+const Null = styled.div`
+  border-left: 1px solid #cccccc;
+  box-sizing: border-box;
+  width: 118px;
+`;
+const Null1 = styled.div`
+  flex: 1;
+  box-sizing: border-box;
+  border-left: 1px solid #cccccc;
+`;
+const Space = styled.div`
+  width: 117.5px;
+  box-sizing: border-box;
+`;
+const Space1 = styled.div`
+  border-left: 1px solid #cccccc;
+  width: 118px;
+  box-sizing: border-box;
+`;
+const Space2 = styled.div`
+  flex: 1;
+  border-left: 1px solid #cccccc;
 `;

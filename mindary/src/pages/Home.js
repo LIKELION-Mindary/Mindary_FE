@@ -16,10 +16,24 @@ const Home = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  const REST_API_KEY = process.env.REACT_APP_KAKAO_API_KEY; // REST API KEY
+  const REDIRECT_URI = process.env.REACT_APP_KAKAO_REDIRECT_URI; // Redirect URI
+  const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
   const handleSearchPwClick = () => {
     setShowSearchPw((prevShowSearchPw) => !prevShowSearchPw);
   };
-
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem("isLoggedIn") === "true"
+  );
+  const handleKakaoLogin = () => {
+    try {
+      window.location.href = kakaoURL;
+      localStorage.setItem("isLoggedIn", "true");
+      setIsLoggedIn(true);
+    } catch (error) {
+      console.error("Login failed", error);
+    }
+  };
   const handleLogin = () => {
     const accountExists = false;
 
@@ -73,7 +87,7 @@ const Home = () => {
               </SelectBar>
               <SimpleLoginWrapper>
                 <SimpleLogin>간편 로그인</SimpleLogin>
-                <KakaoBtn />
+                <KakaoBtn onClick={handleKakaoLogin} />
               </SimpleLoginWrapper>
             </InputSection>
             {showSearchPw && <SearchPw />}
