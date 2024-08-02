@@ -52,7 +52,7 @@ const Navbar1 = ({ selectedDate }) => {
         </Link>
       </RecordSection>
       <ArchieveSection>
-        <Link to="/archieve">
+        <Link to="/mindary/records/archieve">
           <SectionArchieve>Archieve</SectionArchieve>
         </Link>
       </ArchieveSection>

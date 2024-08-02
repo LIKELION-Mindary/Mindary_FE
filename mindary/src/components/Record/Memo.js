@@ -20,11 +20,11 @@ const Memo = ({ selectedDate }) => {
 
         // Fetch new messages based on the selected date
         const response = await axiosInstance.get(
-          `/mindary?date=${formattedDate}&t=${new Date().getTime()}`
+          `/mindary?date=${formattedDate}&mode=chat`
         );
         console.log("API Response:", response.data);
 
-        const chats = response.data.chats || [];
+        const chats = response.data || [];
         const formattedMessages = chats.map((chat) => ({
           text: chat.content || "",
           time: formatTime(chat.created_at) || "",
@@ -63,7 +63,7 @@ const Memo = ({ selectedDate }) => {
       const timeString = formatTime(now.toISOString());
 
       try {
-        await axiosInstance.post(`/mindary?date=${formattedDate}`, {
+        await axiosInstance.post(`/mindary?date=${formattedDate}&mode=chat`, {
           content: inputValue,
         });
         setMessages((prevMessages) => [

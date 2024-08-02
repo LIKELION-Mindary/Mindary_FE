@@ -49,7 +49,7 @@ const Diary = ({ selectedDate }) => {
       const response = await axiosInstance.get(
         `/mindary?date=${formattedDate}&mode=chat`
       );
-      setMemos(response.data.chats);
+      setMemos(response.data);
     } catch (error) {
       console.error("Error fetching memos:", error);
     }
@@ -60,7 +60,7 @@ const Diary = ({ selectedDate }) => {
       const response = await axiosInstance.get(
         `/mindary?date=${formattedDate}&mode=record`
       );
-      setRecords(response.data.records);
+      setRecords(response.data);
     } catch (error) {
       console.error("Error fetching records:", error);
     }
@@ -99,21 +99,12 @@ const Diary = ({ selectedDate }) => {
   };
   const handleSave = async () => {
     try {
-      await axiosInstance.post(
-        `/mindary?date=${formattedDate}&mode=record`,
-        {
-          title: formData.title,
-          category: selectedCategory,
-          content: formData.content,
-          liked: formData.liked,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await axiosInstance.post(`/mindary?date=${formattedDate}&mode=record`, {
+        title: formData.title,
+        category: selectedCategory,
+        content: formData.content,
+        liked: formData.liked,
+      });
       alert("저장되었습니다.");
       setIsEditing(false);
       setFormData({ title: "", content: "", liked: false }); // Reset form data
@@ -155,8 +146,8 @@ const Diary = ({ selectedDate }) => {
                           isSelected={selectedCategory === category}
                         >
                           <WriteCategory>{category}</WriteCategory>
-                          <WriteTitle>&nbsp;</WriteTitle>
-                          <WriteContent>&nbsp;</WriteContent>
+                          <WriteTitle />
+                          <WriteContent />
                         </WriteItem>
                       )
                     )}
@@ -314,15 +305,17 @@ const Record = styled.div`
 const RecordTitle = styled(SubTitle2)`
   height: 89px;
   background-color: white;
-  width: 77px;
+  width: 73px;
+  font-weight: 400;
 `;
 
 const RecordContent = styled(SubTitle3)`
   background-color: white;
+  font-weight: 400;
 `;
 
 const Category = styled(SubTitle1)`
-  width: 45px;
+  width: 43px;
   background-color: ${({ theme }) => theme.background};
 `;
 
