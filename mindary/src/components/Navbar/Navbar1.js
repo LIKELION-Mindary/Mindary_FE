@@ -4,29 +4,36 @@ import { Link } from "react-router-dom";
 import { useTheme } from "../../styles/ThemeContext";
 import { axiosInstance } from "../../api/api";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
-const Navbar1 = () => {
+const Navbar1 = ({ selectedDate }) => {
   const { theme, toggleTheme } = useTheme();
+  const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem("isLoggedIn") === "true"
   );
   const handleLogout = async () => {
+    const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
     try {
-      await axiosInstance.post(
+      const response = await axiosInstance.post(
         "/mindary/accounts/kakao/logout",
-        {},
+        { refresh_token: refreshToken },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         }
       );
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      localStorage.setItem("isLoggedIn", "false");
-      setIsLoggedIn(false);
-      navigate("/");
+
+      if (response.status === 200) {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.setItem("isLoggedIn", "false");
+        setIsLoggedIn(false);
+        navigate("/");
+      }
     } catch (error) {
       console.error("Logout failed", error);
     }
@@ -40,7 +47,7 @@ const Navbar1 = () => {
       <SectionD>D</SectionD>
       <SectionE>E</SectionE>
       <RecordSection>
-        <Link to="/record">
+        <Link to={`/mindary?date=${formattedDate}`}>
           <SectionRecord>Record</SectionRecord>
         </Link>
       </RecordSection>

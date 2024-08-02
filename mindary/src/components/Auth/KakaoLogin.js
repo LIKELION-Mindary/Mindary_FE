@@ -2,6 +2,9 @@ import { useNavigate } from "react-router-dom";
 import React, { useEffect } from "react";
 import { axiosInstance } from "../../api/api";
 import DefaultExcel from "../Background/DefaultExcel";
+import Navbar1 from "../Navbar/Navbar1";
+import styled from "styled-components";
+import Header from "../Header/Header";
 
 const KakaoLogRedirect = () => {
   const navigate = useNavigate();
@@ -61,7 +64,7 @@ const KakaoLogRedirect = () => {
       console.error("Registration failed:", registerError);
       if (registerError.response) {
         if (registerError.response.status === 400) {
-          alert("이미 등록된 사용자입니다.");
+          console.log("이미 등록된 사용자입니다.");
         } else {
           console.error(
             "Unexpected error during registration:",
@@ -83,11 +86,7 @@ const KakaoLogRedirect = () => {
     }
   }, [code, navigate]);
 
-  return (
-    <div>
-      <DefaultExcel>Loading...</DefaultExcel>
-    </div>
-  );
+  return <div>Loading...</div>;
 };
 
 export default KakaoLogRedirect;

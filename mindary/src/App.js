@@ -11,8 +11,8 @@ const App = () => {
       <ThemeProvider>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/accounts/kakao" element={<KakaoLogin />} />
-          <Route path="/record" element={<Record />} />
+          <Route path="/mindary/accounts/kakao" element={<KakaoLogin />} />
+          <Route path="/mindary" element={<Record />} />
         </Routes>
       </ThemeProvider>
     </BrowserRouter>

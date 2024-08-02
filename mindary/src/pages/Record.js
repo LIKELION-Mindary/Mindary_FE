@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled, {
   ThemeProvider as StyledThemeProvider,
 } from "styled-components";
@@ -10,12 +10,37 @@ import MonthResult from "../components/Record/MonthResult";
 import WeekResult from "../components/Record/WeekResult";
 import DefaultExcel from "../components/Background/DefaultExcel";
 import { useTheme } from "../styles/ThemeContext";
+import moment from "moment-timezone";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Record = () => {
   const { theme, toggleTheme } = useTheme();
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
+
+  // Determine the initial date
+  const urlDate = queryParams.get("date");
+  const initialDate = urlDate
+    ? moment.tz(urlDate, "Asia/Seoul").toDate()
+    : new Date(); // Fallback to current date if no date in URL
+
+  const [selectedDate, setSelectedDate] = useState(initialDate);
+
+  useEffect(() => {
+    // Update URL to reflect the selected date, or default to today's date
+    const formattedDate = moment(selectedDate)
+      .tz("Asia/Seoul")
+      .format("YYYY-MM-DD");
+    navigate(`/mindary?date=${formattedDate}`);
+  }, [selectedDate, navigate]);
+
   const handleDateChange = (date) => {
     setSelectedDate(date);
+    const formattedDate = moment(selectedDate)
+      .tz("Asia/Seoul")
+      .format("YYYY-MM-DD");
+    navigate(`/mindary?date=${formattedDate}`);
   };
 
   return (
@@ -25,7 +50,11 @@ const Record = () => {
           <Header />
         </HeaderBase>
         <DefaultExcel />
-        <Navbar toggleTheme={toggleTheme} />
+        <Navbar
+          toggleTheme={toggleTheme}
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+        />
         <Container>
           <Content>
             <CalendarBox>

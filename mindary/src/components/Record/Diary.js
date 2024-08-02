@@ -1,15 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Toggle } from "./Toggle";
+import moment from "moment-timezone";
 import Memo from "./Memo";
-import moment from "moment";
+import { Toggle } from "./Toggle";
 import WritePage from "./WritePage";
+import { axiosInstance } from "../../api/api";
 
 const Diary = ({ selectedDate }) => {
   const [isMemo, setIsMemo] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
+  const [memos, setMemos] = useState([]);
+  const [records, setRecords] = useState([]);
+
+  const formattedDate = moment(selectedDate)
+    .tz("Asia/Seoul")
+    .format("YYYY-MM-DD");
+
+  const getMemos = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/mindary?date=${formattedDate}`
+      );
+      setMemos(response.data.chats); // Memo 데이터를 설정
+    } catch (error) {
+      console.error("Error fetching memos:", error);
+    }
+  };
+
+  const getRecords = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/mindary?date=${formattedDate}`
+      );
+      setRecords(response.data.records);
+    } catch (error) {
+      console.error("Error fetching records:", error);
+    }
+  };
 
   const handleToggle = () => {
     setIsMemo(!isMemo);
@@ -36,10 +65,20 @@ const Diary = ({ selectedDate }) => {
     }
   };
 
+  useEffect(() => {
+    if (isMemo) {
+      getRecords();
+    } else {
+      getMemos();
+    }
+  }, [isMemo, selectedDate]);
+
   return (
     <Container>
       <TitleBox>
-        <Title>{moment(selectedDate).format("M월 D일 일지")}</Title>
+        <Title>
+          {moment(selectedDate).tz("Asia/Seoul").format("M월 D일 일지")}
+        </Title>
         <Toggle isOn={isMemo} toggleHandler={handleToggle} />
       </TitleBox>
       <BodyContainer>
@@ -72,44 +111,19 @@ const Diary = ({ selectedDate }) => {
                   <WritePage category={selectedCategory} />
                 )
               ) : (
-                <>
-                  <Daily>
-                    <Category>일상</Category>
-                    <DailyTitle>ㄴ</DailyTitle>
-                    <DailyContent>ㄴ</DailyContent>
-                  </Daily>
-                  <Movies>
-                    <Category>영화</Category>
-                    <MovieTitle>ㄴ</MovieTitle>
-                    <MovieContent>ㄴ</MovieContent>
-                  </Movies>
-                  <Music>
-                    <Category>음악</Category>
-                    <MusicTitle>ㄴ</MusicTitle>
-                    <MusicContent>ㄴ</MusicContent>
-                  </Music>
-                  <Book>
-                    <Category>독서</Category>
-                    <BookTitle>ㄴ</BookTitle>
-                    <BookContent>ㄴ</BookContent>
-                  </Book>
-                  <Essay>
-                    <Category>에세이</Category>
-                    <EssayTitle>ㄴ</EssayTitle>
-                    <EssayContent>ㄴ</EssayContent>
-                  </Essay>
-                  <ETC>
-                    <Category>기타</Category>
-                    <ETCTitle>ㄴ</ETCTitle>
-                    <ETCContent>ㄴ</ETCContent>
-                  </ETC>
-                </>
+                records.map((record) => (
+                  <Record key={record.id}>
+                    <Category>{record.category}</Category>
+                    <RecordTitle>{record.title}</RecordTitle>
+                    <RecordContent>{record.content}</RecordContent>
+                  </Record>
+                ))
               )}
             </Content>
             <BtnContent
               isEditing={isEditing}
               currentStep={currentStep}
-              style={{ display: "flex ", justifyContent: "space-between" }}
+              style={{ display: "flex", justifyContent: "space-between" }}
             >
               {isEditing ? (
                 <>
@@ -138,7 +152,7 @@ const Diary = ({ selectedDate }) => {
             </BtnContent>
           </Body>
         ) : (
-          <Memo date={selectedDate} />
+          <Memo date={selectedDate} memos={memos} />
         )}
       </BodyContainer>
     </Container>
@@ -229,7 +243,7 @@ const SubTitle3 = styled(SubTitle1)`
   border-right: none;
 `;
 
-const Daily = styled.div`
+const Record = styled.div`
   display: flex;
   border-bottom: 1px solid black;
   flex-direction: row;
@@ -237,19 +251,13 @@ const Daily = styled.div`
   box-sizing: border-box;
 `;
 
-const Movies = styled(Daily)``;
-const Book = styled(Daily)``;
-const ETC = styled(Daily)``;
-const Music = styled(Daily)``;
-const Essay = styled(Daily)``;
-
-const DailyTitle = styled(SubTitle2)`
+const RecordTitle = styled(SubTitle2)`
   height: 89px;
   background-color: white;
   width: 77px;
 `;
 
-const DailyContent = styled(SubTitle3)`
+const RecordContent = styled(SubTitle3)`
   background-color: white;
 `;
 
@@ -257,17 +265,6 @@ const Category = styled(SubTitle1)`
   width: 45px;
   background-color: ${({ theme }) => theme.background};
 `;
-
-const MovieTitle = styled(DailyTitle)``;
-const MovieContent = styled(DailyContent)``;
-const BookTitle = styled(DailyTitle)``;
-const BookContent = styled(DailyContent)``;
-const ETCTitle = styled(DailyTitle)``;
-const ETCContent = styled(DailyContent)``;
-const MusicTitle = styled(DailyTitle)``;
-const MusicContent = styled(DailyContent)``;
-const EssayTitle = styled(DailyTitle)``;
-const EssayContent = styled(DailyContent)``;
 
 const WriteBtn = styled.button`
   display: flex;
@@ -288,7 +285,6 @@ const BtnContent = styled.div`
   background-color: white;
   margin-top: ${(props) =>
     props.isEditing && props.currentStep === 1 ? "0" : "60px"};
-
   height: 28px;
 `;
 

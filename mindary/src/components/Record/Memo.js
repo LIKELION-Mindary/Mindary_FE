@@ -1,67 +1,101 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
+import { axiosInstance } from "../../api/api";
+import moment from "moment";
 
-const Memo = () => {
+const Memo = ({ selectedDate }) => {
   const [inputValue, setInputValue] = useState("");
   const [messages, setMessages] = useState([]);
-  const [inputHeight, setInputHeight] = useState("89px"); // 초기 높이 설정
   const inputRef = useRef(null);
-  const dummyRef = useRef(null); // dummy element를 참조할 ref
+  const dummyRef = useRef(null);
+  const msgEndRef = useRef(null);
+
+  const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
+
+  useEffect(() => {
+    const getMemos = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/mindary?date=${formattedDate}`
+        );
+        console.log("API Response:", response.data);
+
+        const chats = response.data.chats || [];
+        const formattedMessages = chats.map((chat) => ({
+          text: chat.content || "",
+          time: formatTime(chat.created_at) || "",
+        }));
+
+        console.log("Formatted Messages:", formattedMessages);
+        setMessages(formattedMessages);
+      } catch (error) {
+        console.error("Error fetching memos:", error);
+      }
+    };
+
+    getMemos();
+  }, [formattedDate]);
 
   useEffect(() => {
     if (inputRef.current) {
-      // 입력값이 변경될 때마다 높이를 조정합니다.
-      const textarea = inputRef.current;
-      const { scrollHeight } = textarea;
-      setInputHeight(`${scrollHeight}px`);
+      const { scrollHeight } = inputRef.current;
+      inputRef.current.style.height = `${scrollHeight}px`;
     }
   }, [inputValue]);
+
+  useEffect(() => {
+    if (msgEndRef.current) {
+      msgEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
 
-  const handleButtonClick = () => {
-    if (inputValue.trim() !== "") {
+  const handleButtonClick = async () => {
+    if (inputValue.trim()) {
       const now = new Date();
-      const timeString = formatTime(now);
-      const lineCount = calculateLineCount(inputValue);
-      const newMessage = {
-        text: inputValue,
-        time: timeString,
-        lineCount: lineCount,
-        height: lineCount * 30, // 한 줄당 30px
-      };
-      setMessages([...messages, newMessage]);
-      setInputValue(""); // 입력 필드를 비웁니다.
+      const timeString = formatTime(now.toISOString());
+
+      try {
+        await axiosInstance.post(`/mindary?date=${formattedDate}`, {
+          content: inputValue,
+        });
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { text: inputValue, time: timeString },
+        ]);
+        setInputValue("");
+      } catch (error) {
+        console.error("Failed to post message", error);
+      }
     }
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault(); // 기본 Enter 키 동작을 막습니다.
-      handleButtonClick();
+      e.preventDefault(); // 기본 엔터키 동작 방지 (줄바꿈 방지)
+
+      // 입력이 IME(입력기)로부터 오는 경우에는 처리하지 않음
+      if (e.nativeEvent.isComposing) {
+        return;
+      }
+
+      handleButtonClick(); // 메시지 전송 함수 호출
     }
   };
 
-  const formatTime = (date) => {
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? "오후" : "오전";
-    const hour12 = hours % 12 || 12; // 12시간 형식으로 변환
-    const minuteStr = minutes < 10 ? `0${minutes}` : minutes; // 분을 2자리로 포맷
-
-    return `${ampm} ${hour12}시 ${minuteStr}분`;
+  const formatTime = (isoDate) => {
+    const momentDate = moment(isoDate);
+    const isPM = momentDate.format("A") === "PM";
+    const formattedTime = momentDate.format("h시 mm분");
+    return isPM ? `오후 ${formattedTime}` : `오전 ${formattedTime}`;
   };
 
-  const calculateLineCount = (text) => {
-    if (dummyRef.current) {
-      dummyRef.current.style.width = "400px"; // 입력 필드의 너비와 동일하게 설정
-      dummyRef.current.textContent = text;
-      const height = dummyRef.current.scrollHeight;
-      return Math.ceil(height / 30); // 각 줄의 높이가 30px로 가정
-    }
-    return 1; // 기본 줄 수
+  const calculateHeight = (text) => {
+    const lineCount = text.split("\n").length;
+    return lineCount * 29; // 줄 수에 따라 높이를 계산 (한 줄에 30px)
   };
 
   return (
@@ -74,14 +108,15 @@ const Memo = () => {
               <Null />
               <Null1 />
             </TimeSection>
-            <TextBox height={msg.height}>{msg.text}</TextBox>
-            <SpaceSection>
-              <Space />
-              <Space1 />
-              <Space2 />
-            </SpaceSection>
+            <TextBox height={calculateHeight(msg.text)}>{msg.text}</TextBox>
+            <SpacerSection>
+              <Spacer />
+              <Spacer1 />
+              <Spacer2 />
+            </SpacerSection>
           </Message>
         ))}
+        <div ref={msgEndRef} /> {/* Scroll to this element */}
       </Msg>
       <InputWrapper>
         <Input
@@ -89,7 +124,7 @@ const Memo = () => {
           placeholder="하고 싶은 말, 마음에 담아두지 마세요."
           value={inputValue}
           onChange={handleInputChange}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyDown}
         />
         <BtnContent>
           <InputBtn onClick={handleButtonClick}>등록하기</InputBtn>
@@ -109,7 +144,7 @@ const Body = styled.div`
   width: 463px;
   height: 480px;
   padding-right: 2px;
-  box-sizing: border-box; /* 전체 요소의 너비와 높이를 계산할 때 패딩과 보더를 포함 */
+  box-sizing: border-box;
 `;
 
 const InputWrapper = styled.div`
@@ -119,15 +154,14 @@ const InputWrapper = styled.div`
 `;
 
 const Input = styled.textarea`
-  width: 100%; /* 부모 요소의 너비에 맞춥니다 */
+  width: 100%;
   padding: 15px;
-  outline: none; /* 포커스 시 외곽선 제거 */
+  outline: none;
   overflow-y: auto;
-  height: 90px;
   border: none;
-  resize: none; /* 사용자가 크기를 조절하지 못하게 합니다. */
-  box-sizing: border-box; /* padding과 border가 요소의 총 너비와 높이에 포함되도록 합니다. */
-  font-size: 14.11px;
+  resize: none;
+  box-sizing: border-box;
+  font-size: 14px;
   font-weight: 400;
   &::placeholder {
     color: #d0d0d0;
@@ -136,14 +170,14 @@ const Input = styled.textarea`
 `;
 
 const Msg = styled.div`
-  flex-grow: 1; /* 이 요소가 남은 공간을 차지하도록 합니다 */
+  flex-grow: 1;
   width: 100%;
-  border: none;
   margin: 0;
   background-color: white;
   overflow-x: hidden;
   overflow-y: auto;
-  padding-bottom: 20px; /* 버튼에 의해 내용이 가려지지 않도록 여유 공간을 둡니다 */
+  padding-bottom: 20px;
+  border-bottom: 1px solid #cccccc;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -155,7 +189,6 @@ const Msg = styled.div`
 
   &::-webkit-scrollbar-thumb {
     background: #cccccc;
-    position: relative;
     border-radius: 4px;
   }
 `;
@@ -167,7 +200,6 @@ const Time = styled.div`
   height: 30px;
   font-size: 14px;
   font-weight: 700;
-  background-color: transparent;
   padding-left: 10px;
   box-sizing: border-box;
 `;
@@ -175,7 +207,6 @@ const Time = styled.div`
 const Message = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
 `;
 
 const TextBox = styled.div`
@@ -186,10 +217,9 @@ const TextBox = styled.div`
   font-size: 14px;
   font-weight: 400;
   width: 100%;
-  background-color: white;
-  height: ${(props) => props.height}px; /* 동적으로 높이 설정 */
-  box-sizing: border-box; /* 높이 계산에 패딩과 보더를 포함 */
-  white-space: pre-wrap; /* 줄바꿈 문자와 공백을 그대로 유지 */
+  box-sizing: border-box;
+  white-space: pre-wrap;
+  height: ${(props) => props.height}px; // Apply dynamic height
 `;
 
 const InputBtn = styled.button`
@@ -207,12 +237,12 @@ const InputBtn = styled.button`
 const Dummy = styled.div`
   visibility: hidden;
   white-space: pre-wrap;
-  word-break: break-word;
   position: absolute;
   top: 0;
   left: 0;
-  width: 433px; /* 입력 필드와 동일한 너비 */
+  width: 100%;
 `;
+
 const BtnContent = styled.div`
   width: 100%;
   height: 28px;
@@ -220,7 +250,7 @@ const BtnContent = styled.div`
   justify-content: flex-end;
 `;
 
-const SpaceSection = styled.div`
+const SpacerSection = styled.div`
   display: flex;
   height: 30px;
   flex-direction: row;
@@ -228,31 +258,31 @@ const SpaceSection = styled.div`
   border-bottom: 1px solid #cccccc;
 `;
 
-const TimeSection = styled(SpaceSection)`
-  border-bottom: 1px solid #cccccc;
+const TimeSection = styled(SpacerSection)`
   height: 29.5px;
+`;
+
+const Spacer = styled.div`
+  width: 118.5px;
+  box-sizing: border-box;
+  border-right: 1px solid #cccccc;
+`;
+const Spacer1 = styled.div`
+  width: 119px;
+  border-right: 1px solid #cccccc;
   box-sizing: border-box;
 `;
+const Spacer2 = styled(Spacer1)`
+  border-right: none;
+  flex: 1;
+`;
 const Null = styled.div`
+  width: 119px;
   border-left: 1px solid #cccccc;
   box-sizing: border-box;
-  width: 118px;
 `;
 const Null1 = styled.div`
   flex: 1;
-  box-sizing: border-box;
   border-left: 1px solid #cccccc;
-`;
-const Space = styled.div`
-  width: 117.5px;
   box-sizing: border-box;
-`;
-const Space1 = styled.div`
-  border-left: 1px solid #cccccc;
-  width: 118px;
-  box-sizing: border-box;
-`;
-const Space2 = styled.div`
-  flex: 1;
-  border-left: 1px solid #cccccc;
 `;
