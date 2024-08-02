@@ -7,11 +7,11 @@ const ToggleContainer = styled.div`
   position: fixed;
   align-items: center;
   justify-content: flex-start;
-  margin-left: 141px;
+  margin-left: 123px;
 
   .toggle-container {
     width: 40.8px;
-    height: 20px;
+    height: 18px;
     background-color: rgb(233, 233, 234);
     border: 1.5px solid #cccccc;
     transition: background-color 0.5s;
@@ -27,8 +27,8 @@ const ToggleContainer = styled.div`
   }
 
   .toggle-circle {
-    width: 16px;
-    height: 19px;
+    width: 14px;
+    height: 16px;
     background: linear-gradient(270deg, #e2e2e2 0%, #f0f0f0 50%, #e2e2e2 100%);
     border: 1.5px solid #cccccc;
     transition: transform 0.5s; /* 위치 이동 애니메이션 */
@@ -65,7 +65,7 @@ const ToggleContainer = styled.div`
   }
 
   .toggle-container.toggle--checked .toggle-circle {
-    transform: translateX(21px); /* 오른쪽으로 이동 */
+    transform: translateX(23px); /* 오른쪽으로 이동 */
   }
 `;
 

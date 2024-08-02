@@ -1,43 +1,105 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
+import { axiosInstance } from "../../api/api";
+import moment from "moment";
 
-const Memo = () => {
+const Memo = ({ selectedDate }) => {
   const [inputValue, setInputValue] = useState("");
   const [messages, setMessages] = useState([]);
+  const inputRef = useRef(null);
+  const dummyRef = useRef(null);
+  const msgEndRef = useRef(null);
+
+  const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
+
+  useEffect(() => {
+    const getMemos = async () => {
+      try {
+        // Clear previous messages
+        setMessages([]);
+
+        // Fetch new messages based on the selected date
+        const response = await axiosInstance.get(
+          `/mindary?date=${formattedDate}&t=${new Date().getTime()}`
+        );
+        console.log("API Response:", response.data);
+
+        const chats = response.data.chats || [];
+        const formattedMessages = chats.map((chat) => ({
+          text: chat.content || "",
+          time: formatTime(chat.created_at) || "",
+        }));
+
+        console.log("Formatted Messages:", formattedMessages);
+        setMessages(formattedMessages);
+      } catch (error) {
+        console.error("Error fetching memos:", error);
+      }
+    };
+
+    getMemos();
+  }, [formattedDate]);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      const { scrollHeight } = inputRef.current;
+      inputRef.current.style.height = `${scrollHeight}px`;
+    }
+  }, [inputValue]);
+
+  useEffect(() => {
+    if (msgEndRef.current) {
+      msgEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
 
-  const handleButtonClick = () => {
-    if (inputValue.trim() !== "") {
+  const handleButtonClick = async () => {
+    if (inputValue.trim()) {
       const now = new Date();
-      const timeString = formatTime(now);
-      setMessages([...messages, { text: inputValue, time: timeString }]);
-      setInputValue(""); // 입력 필드를 비웁니다.
+      const timeString = formatTime(now.toISOString());
+
+      try {
+        await axiosInstance.post(`/mindary?date=${formattedDate}`, {
+          content: inputValue,
+        });
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { text: inputValue, time: timeString },
+        ]);
+        setInputValue("");
+      } catch (error) {
+        console.error("Failed to post message", error);
+      }
     }
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault(); // 기본 Enter 키 동작을 막습니다.
-      handleButtonClick();
+      e.preventDefault(); // 기본 엔터키 동작 방지 (줄바꿈 방지)
+
+      // 입력이 IME(입력기)로부터 오는 경우에는 처리하지 않음
+      if (e.nativeEvent.isComposing) {
+        return;
+      }
+
+      handleButtonClick(); // 메시지 전송 함수 호출
     }
   };
 
-  const formatTime = (date) => {
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? "오후" : "오전";
-    const hour12 = hours % 12 || 12; // 12시간 형식으로 변환
-    const minuteStr = minutes < 10 ? `0${minutes}` : minutes; // 분을 2자리로 포맷
-
-    return `${ampm} ${hour12}시 ${minuteStr}분`;
+  const formatTime = (isoDate) => {
+    const momentDate = moment(isoDate);
+    const isPM = momentDate.format("A") === "PM";
+    const formattedTime = momentDate.format("h시 mm분");
+    return isPM ? `오후 ${formattedTime}` : `오전 ${formattedTime}`;
   };
 
   const calculateHeight = (text) => {
     const lineCount = text.split("\n").length;
-    return lineCount * 32; // 줄 수에 따라 높이를 계산 (한 줄에 30px)
+    return lineCount * 29; // 줄 수에 따라 높이를 계산 (한 줄에 30px)
   };
 
   return (
@@ -45,20 +107,34 @@ const Memo = () => {
       <Msg>
         {messages.map((msg, index) => (
           <Message key={index}>
-            <Time>{msg.time}</Time>
+            <TimeSection>
+              <Time>{msg.time}</Time>
+              <Null />
+              <Null1 />
+            </TimeSection>
             <TextBox height={calculateHeight(msg.text)}>{msg.text}</TextBox>
+            <SpacerSection>
+              <Spacer />
+              <Spacer1 />
+              <Spacer2 />
+            </SpacerSection>
           </Message>
         ))}
+        <div ref={msgEndRef} /> {/* Scroll to this element */}
       </Msg>
       <InputWrapper>
         <Input
+          ref={inputRef}
           placeholder="하고 싶은 말, 마음에 담아두지 마세요."
           value={inputValue}
           onChange={handleInputChange}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyDown}
         />
+        <BtnContent>
+          <InputBtn onClick={handleButtonClick}>등록하기</InputBtn>
+        </BtnContent>
+        <Dummy ref={dummyRef} />
       </InputWrapper>
-      <InputBtn onClick={handleButtonClick}>등록하기</InputBtn>
     </Body>
   );
 };
@@ -68,27 +144,29 @@ export default Memo;
 const Body = styled.div`
   display: flex;
   flex-direction: column;
-  border: 1.5px solid black;
-  width: 460px;
-  height: 478px;
+  border: 1px solid black;
+  width: 463px;
+  height: 480px;
+  padding-right: 2px;
+  box-sizing: border-box;
 `;
 
 const InputWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  position: relative;
 `;
 
 const Input = styled.textarea`
-  width: 460px;
-  height: 89px;
+  width: 100%;
   padding: 15px;
-  display: flex;
-  position: fixed;
-  top: 562px;
+  height: 90px;
+  outline: none;
+  overflow-y: auto;
   border: none;
-  resize: none; /* 사용자가 크기를 조절하지 못하게 합니다. */
-  box-sizing: border-box; /* padding과 border가 요소의 총 너비와 높이에 포함되도록 합니다. */
-  font-size: 14.11px;
+  resize: none;
+  box-sizing: border-box;
+  font-size: 14px;
   font-weight: 400;
   &::placeholder {
     color: #d0d0d0;
@@ -97,96 +175,119 @@ const Input = styled.textarea`
 `;
 
 const Msg = styled.div`
-  height: 371px;
+  flex-grow: 1;
   width: 100%;
-  border: none;
   margin: 0;
+  background-color: white;
   overflow-x: hidden;
   overflow-y: auto;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #cccccc;
 
   &::-webkit-scrollbar {
-    width: 20px;
+    width: 8px;
   }
 
   &::-webkit-scrollbar-track {
-    background: rgba(240, 240, 240, 0.6);
+    background: transparent;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: linear-gradient(0deg, #e2e2e2 0%, #fffefe 50%, #e2e2e2 100%);
-    width: 13px;
-    position: relative;
-  }
-  /* 핸들의 가로선 */
-  &::-webkit-scrollbar-thumb::before {
-    content: "";
-    position: absolute;
-    top: 10px; /* 핸들 상단에서의 위치 */
-    left: 50%;
-    transform: translateX(-50%); /* 수평 중앙 정렬 */
-    width: 100%; /* 가로선의 길이 */
-    height: 2px; /* 가로선의 두께 */
-    background: #cccccc; /* 가로선의 색상 */
-    border-radius: 2px; /* 가로선의 모서리 둥글게 */
-  }
-
-  &::-webkit-scrollbar-thumb::after {
-    content: "";
-    position: absolute;
-    top: 20px; /* 핸들 상단에서의 위치 */
-    left: 50%;
-    transform: translateX(-50%); /* 수평 중앙 정렬 */
-    width: 60%; /* 가로선의 길이 */
-    height: 2px; /* 가로선의 두께 */
-    background: #cccccc; /* 가로선의 색상 */
-    border-radius: 2px; /* 가로선의 모서리 둥글게 */
-  }
-
-  &::-webkit-scrollbar-thumb::nth-of-type(2) {
-    content: "";
-    position: absolute;
-    top: 30px; /* 핸들 상단에서의 위치 */
-    left: 50%;
-    transform: translateX(-50%); /* 수평 중앙 정렬 */
-    width: 60%; /* 가로선의 길이 */
-    height: 2px; /* 가로선의 두께 */
-    background: #cccccc; /* 가로선의 색상 */
-    border-radius: 2px; /* 가로선의 모서리 둥글게 */
+    background: #cccccc;
+    border-radius: 4px;
   }
 `;
 
 const Time = styled.div`
+  width: 117.5px;
   display: flex;
   align-items: center;
   height: 30px;
   font-size: 14px;
+  font-weight: 700;
   padding-left: 10px;
+  box-sizing: border-box;
 `;
 
 const Message = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
 `;
 
 const TextBox = styled.div`
   display: flex;
   align-items: center;
   padding-left: 10px;
+  border-bottom: 1px solid #cccccc;
   font-size: 14px;
   font-weight: 400;
-  width: 387px;
-  height: ${(props) => props.height}px; /* 동적으로 높이 설정 */
+  width: 100%;
+  box-sizing: border-box;
+  white-space: pre-wrap;
+  height: ${(props) => props.height}px; // Apply dynamic height
 `;
 
 const InputBtn = styled.button`
   position: absolute;
-  bottom: 2px;
-  right: 20px;
+  bottom: 1px;
+  right: 1px;
   width: 65px;
   height: 30px;
   font-size: 13px;
   border: none;
   text-decoration: underline;
   cursor: pointer;
+`;
+
+const Dummy = styled.div`
+  visibility: hidden;
+  white-space: pre-wrap;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+`;
+
+const BtnContent = styled.div`
+  width: 100%;
+  height: 28px;
+  display: flex;
+  justify-content: flex-end;
+`;
+
+const SpacerSection = styled.div`
+  display: flex;
+  height: 30px;
+  flex-direction: row;
+  width: 100%;
+  border-bottom: 1px solid #cccccc;
+`;
+
+const TimeSection = styled(SpacerSection)`
+  height: 29.5px;
+`;
+
+const Spacer = styled.div`
+  width: 118.5px;
+  box-sizing: border-box;
+  border-right: 1px solid #cccccc;
+`;
+const Spacer1 = styled.div`
+  width: 119px;
+  border-right: 1px solid #cccccc;
+  box-sizing: border-box;
+`;
+const Spacer2 = styled(Spacer1)`
+  border-right: none;
+  flex: 1;
+`;
+const Null = styled.div`
+  width: 119px;
+  border-left: 1px solid #cccccc;
+  box-sizing: border-box;
+`;
+const Null1 = styled.div`
+  flex: 1;
+  border-left: 1px solid #cccccc;
+  box-sizing: border-box;
 `;
