@@ -28,19 +28,20 @@ const Record = () => {
   const [selectedDate, setSelectedDate] = useState(initialDate);
 
   useEffect(() => {
-    // Update URL to reflect the selected date, or default to today's date
+    // Format the date as YYYY-MM-DD
     const formattedDate = moment(selectedDate)
       .tz("Asia/Seoul")
       .format("YYYY-MM-DD");
-    navigate(`/mindary?date=${formattedDate}`);
-  }, [selectedDate, navigate]);
+
+    // Only navigate if the formattedDate is not the same as in the URL
+    const currentUrlDate = queryParams.get("date");
+    if (formattedDate !== currentUrlDate) {
+      navigate(`/mindary?date=${formattedDate}&mode=chat`);
+    }
+  }, [selectedDate, navigate, queryParams]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
-    const formattedDate = moment(selectedDate)
-      .tz("Asia/Seoul")
-      .format("YYYY-MM-DD");
-    navigate(`/mindary?date=${formattedDate}`);
   };
 
   return (

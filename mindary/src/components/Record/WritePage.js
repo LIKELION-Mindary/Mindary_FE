@@ -1,10 +1,30 @@
 import styled from "styled-components";
-const WritePage = ({ category }) => {
+import { useState } from "react";
+import { axiosInstance } from "../../api/api";
+import moment from "moment";
+
+const WritePage = ({ category, onFormDataChange, formData }) => {
+  const handleTitleChange = (e) => {
+    onFormDataChange({ title: e.target.value });
+  };
+
+  const handleContentChange = (e) => {
+    onFormDataChange({ content: e.target.value });
+  };
+
   return (
     <Wrapper>
       <Category>{category}</Category>
-      <Title placeholder="제목을 입력하세요."></Title>
-      <Content placeholder="본문을 입력하세요."></Content>
+      <Title
+        placeholder="제목을 입력하세요."
+        value={formData.title || ""}
+        onChange={handleTitleChange}
+      />
+      <Content
+        placeholder="본문을 입력하세요."
+        value={formData.content || ""}
+        onChange={handleContentChange}
+      />
     </Wrapper>
   );
 };

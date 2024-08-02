@@ -15,8 +15,12 @@ const Memo = ({ selectedDate }) => {
   useEffect(() => {
     const getMemos = async () => {
       try {
+        // Clear previous messages
+        setMessages([]);
+
+        // Fetch new messages based on the selected date
         const response = await axiosInstance.get(
-          `/mindary?date=${formattedDate}`
+          `/mindary?date=${formattedDate}&t=${new Date().getTime()}`
         );
         console.log("API Response:", response.data);
 
@@ -156,6 +160,7 @@ const InputWrapper = styled.div`
 const Input = styled.textarea`
   width: 100%;
   padding: 15px;
+  height: 90px;
   outline: none;
   overflow-y: auto;
   border: none;

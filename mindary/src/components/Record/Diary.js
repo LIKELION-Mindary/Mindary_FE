@@ -5,25 +5,51 @@ import Memo from "./Memo";
 import { Toggle } from "./Toggle";
 import WritePage from "./WritePage";
 import { axiosInstance } from "../../api/api";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Diary = ({ selectedDate }) => {
-  const [isMemo, setIsMemo] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [isChat, setIsChat] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [memos, setMemos] = useState([]);
   const [records, setRecords] = useState([]);
+  const [formData, setFormData] = useState({
+    title: "",
+    content: "",
+    liked: false,
+  });
 
   const formattedDate = moment(selectedDate)
     .tz("Asia/Seoul")
     .format("YYYY-MM-DD");
 
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const mode = queryParams.get("mode");
+    setIsChat(mode === "record");
+
+    setIsEditing(false);
+    setCurrentStep(0);
+    setSelectedCategory(null);
+  }, [location]);
+
+  useEffect(() => {
+    if (!isChat) {
+      getRecords();
+    } else {
+      getMemos();
+    }
+  }, [isChat, selectedDate]);
+
   const getMemos = async () => {
     try {
       const response = await axiosInstance.get(
-        `/mindary?date=${formattedDate}`
+        `/mindary?date=${formattedDate}&mode=chat`
       );
-      setMemos(response.data.chats); // Memo 데이터를 설정
+      setMemos(response.data.chats);
     } catch (error) {
       console.error("Error fetching memos:", error);
     }
@@ -32,7 +58,7 @@ const Diary = ({ selectedDate }) => {
   const getRecords = async () => {
     try {
       const response = await axiosInstance.get(
-        `/mindary?date=${formattedDate}`
+        `/mindary?date=${formattedDate}&mode=record`
       );
       setRecords(response.data.records);
     } catch (error) {
@@ -41,12 +67,14 @@ const Diary = ({ selectedDate }) => {
   };
 
   const handleToggle = () => {
-    setIsMemo(!isMemo);
+    const newMode = isChat ? "chat" : "record";
+    setIsChat((prev) => !prev);
+    navigate(`/mindary?date=${formattedDate}&mode=${newMode}`);
   };
 
   const handleEditClick = () => {
     setIsEditing(true);
-    setCurrentStep(0); // Ensure to start at the first step
+    setCurrentStep(0);
   };
 
   const handleCategorySelect = (category) => {
@@ -54,24 +82,50 @@ const Diary = ({ selectedDate }) => {
   };
 
   const handlePreviousStep = () => {
-    setSelectedCategory(null);
-    setCurrentStep(0);
+    if (currentStep === 1) {
+      setSelectedCategory(null);
+      setCurrentStep(0);
+    } else {
+      setIsEditing(false);
+      setSelectedCategory(null);
+      setCurrentStep(0);
+    }
   };
 
   const handleNextStep = () => {
     if (selectedCategory) {
-      // Go to the next step which is the writing page for the selected category
       setCurrentStep(1);
     }
   };
-
-  useEffect(() => {
-    if (isMemo) {
+  const handleSave = async () => {
+    try {
+      await axiosInstance.post(
+        `/mindary?date=${formattedDate}&mode=record`,
+        {
+          title: formData.title,
+          category: selectedCategory,
+          content: formData.content,
+          liked: formData.liked,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      alert("저장되었습니다.");
+      setIsEditing(false);
+      setFormData({ title: "", content: "", liked: false }); // Reset form data
       getRecords();
-    } else {
-      getMemos();
+    } catch (error) {
+      console.error("Failed to post data:", error);
+      alert("저장 실패");
     }
-  }, [isMemo, selectedDate]);
+  };
+  const handleFormDataChange = (newData) => {
+    setFormData((prev) => ({ ...prev, ...newData }));
+  };
 
   return (
     <Container>
@@ -79,10 +133,10 @@ const Diary = ({ selectedDate }) => {
         <Title>
           {moment(selectedDate).tz("Asia/Seoul").format("M월 D일 일지")}
         </Title>
-        <Toggle isOn={isMemo} toggleHandler={handleToggle} />
+        <Toggle isOn={isChat} toggleHandler={handleToggle} />
       </TitleBox>
       <BodyContainer>
-        {isMemo ? (
+        {isChat ? (
           <Body>
             <SubTitle>
               <SubTitle1>분야</SubTitle1>
@@ -108,7 +162,12 @@ const Diary = ({ selectedDate }) => {
                     )}
                   </WriteSection>
                 ) : (
-                  <WritePage category={selectedCategory} />
+                  <WritePage
+                    selectedDate={selectedDate}
+                    category={selectedCategory}
+                    formData={formData}
+                    onFormDataChange={handleFormDataChange}
+                  />
                 )
               ) : (
                 records.map((record) => (
@@ -140,9 +199,7 @@ const Diary = ({ selectedDate }) => {
                       <PreviousBtn onClick={handlePreviousStep}>
                         이전 단계
                       </PreviousBtn>
-                      <SaveBtn onClick={() => setIsEditing(false)}>
-                        등록하기
-                      </SaveBtn>
+                      <SaveBtn onClick={handleSave}>등록하기</SaveBtn>
                     </>
                   )}
                 </>
@@ -152,7 +209,7 @@ const Diary = ({ selectedDate }) => {
             </BtnContent>
           </Body>
         ) : (
-          <Memo date={selectedDate} memos={memos} />
+          <Memo selectedDate={selectedDate} memos={memos} />
         )}
       </BodyContainer>
     </Container>
@@ -161,6 +218,7 @@ const Diary = ({ selectedDate }) => {
 
 export default Diary;
 
+// Styled components
 const BodyContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -170,6 +228,7 @@ const BodyContainer = styled.div`
 
 const Body = styled.div`
   display: flex;
+  position: relative;
   flex-direction: column;
   align-items: center;
   border: 1px solid black;
@@ -248,6 +307,7 @@ const Record = styled.div`
   border-bottom: 1px solid black;
   flex-direction: row;
   width: 100%;
+  height: 100%;
   box-sizing: border-box;
 `;
 
@@ -268,7 +328,7 @@ const Category = styled(SubTitle1)`
 
 const WriteBtn = styled.button`
   display: flex;
-  right: 30px;
+  right: 3px;
   bottom: 5px;
   position: absolute;
   align-items: center;
@@ -279,13 +339,18 @@ const WriteBtn = styled.button`
 const SaveBtn = styled(WriteBtn)``;
 
 const BtnContent = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 29px;
   width: 100%;
-  border-top: ${(props) =>
-    props.isEditing && props.currentStep === 1 ? "1px solid black" : ""};
   background-color: white;
-  margin-top: ${(props) =>
-    props.isEditing && props.currentStep === 1 ? "0" : "60px"};
-  height: 28px;
+  border-top: 1px solid black;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
 `;
 
 const WriteSection = styled.div`
