@@ -7,7 +7,7 @@ const Memo = ({ selectedDate }) => {
   const [inputValue, setInputValue] = useState("");
   const [messages, setMessages] = useState([]);
   const inputRef = useRef(null);
-  const dummyRef = useRef(null);
+  const dummyRef = useRef(null); // Reference for dummy element
   const msgEndRef = useRef(null);
 
   const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
@@ -15,10 +15,8 @@ const Memo = ({ selectedDate }) => {
   useEffect(() => {
     const getMemos = async () => {
       try {
-        // Clear previous messages
         setMessages([]);
 
-        // Fetch new messages based on the selected date
         const response = await axiosInstance.get(
           `/mindary?date=${formattedDate}&mode=chat`
         );
@@ -42,8 +40,8 @@ const Memo = ({ selectedDate }) => {
 
   useEffect(() => {
     if (inputRef.current) {
-      const { scrollHeight } = inputRef.current;
-      inputRef.current.style.height = `${scrollHeight}px`;
+      inputRef.current.style.height = "auto"; // Reset the height
+      inputRef.current.style.height = `${inputRef.current.scrollHeight}px`; // Set new height
     }
   }, [inputValue]);
 
@@ -79,14 +77,11 @@ const Memo = ({ selectedDate }) => {
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault(); // 기본 엔터키 동작 방지 (줄바꿈 방지)
-
-      // 입력이 IME(입력기)로부터 오는 경우에는 처리하지 않음
+      e.preventDefault();
       if (e.nativeEvent.isComposing) {
         return;
       }
-
-      handleButtonClick(); // 메시지 전송 함수 호출
+      handleButtonClick();
     }
   };
 
@@ -98,8 +93,12 @@ const Memo = ({ selectedDate }) => {
   };
 
   const calculateHeight = (text) => {
-    const lineCount = text.split("\n").length;
-    return lineCount * 29; // 줄 수에 따라 높이를 계산 (한 줄에 30px)
+    if (dummyRef.current) {
+      dummyRef.current.textContent = text;
+      // Minimum height is 30px, adjust if text height exceeds this
+      return Math.max(dummyRef.current.scrollHeight, 30);
+    }
+    return 30; // Fallback height if dummyRef is not set
   };
 
   return (
@@ -120,7 +119,7 @@ const Memo = ({ selectedDate }) => {
             </SpacerSection>
           </Message>
         ))}
-        <div ref={msgEndRef} /> {/* Scroll to this element */}
+        <div ref={msgEndRef} />
       </Msg>
       <InputWrapper>
         <Input
@@ -133,7 +132,7 @@ const Memo = ({ selectedDate }) => {
         <BtnContent>
           <InputBtn onClick={handleButtonClick}>등록하기</InputBtn>
         </BtnContent>
-        <Dummy ref={dummyRef} />
+        <Dummy ref={dummyRef} /> {/* Dummy element to measure content height */}
       </InputWrapper>
     </Body>
   );
@@ -224,7 +223,8 @@ const TextBox = styled.div`
   width: 100%;
   box-sizing: border-box;
   white-space: pre-wrap;
-  height: ${(props) => props.height}px; // Apply dynamic height
+  height: ${(props) => props.height}px;
+  overflow: hidden;
 `;
 
 const InputBtn = styled.button`

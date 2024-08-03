@@ -303,10 +303,14 @@ const Record = styled.div`
 `;
 
 const RecordTitle = styled(SubTitle2)`
+  display: flex;
+  align-items: center;
   height: 89px;
   background-color: white;
-  width: 73px;
+  width: 67px;
   font-weight: 400;
+  padding-left: 3px;
+  padding-right: 3px;
 `;
 
 const RecordContent = styled(SubTitle3)`

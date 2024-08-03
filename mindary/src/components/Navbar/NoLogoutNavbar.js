@@ -6,42 +6,13 @@ import { axiosInstance } from "../../api/api";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 
-const Navbar1 = ({ selectedDate }) => {
+const NoLogoutNavbar = ({ selectedDate }) => {
   const { theme, toggleTheme } = useTheme();
   const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem("isLoggedIn") === "true"
   );
-  const handleLogout = async () => {
-    try {
-      // 백엔드로 로그아웃 요청 보내기
-      const response = await fetch(
-        "http://127.0.0.1:8000/mindary/accounts/kakao/logout",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-          body: JSON.stringify({
-            refresh_token: localStorage.getItem("refresh_token"),
-          }),
-        }
-      );
-
-      if (response.ok) {
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
-        navigate("/");
-      } else {
-        alert("로그아웃 실패. 다시 시도해주세요.");
-      }
-    } catch (error) {
-      console.error("로그아웃 중 오류 발생:", error);
-      alert("로그아웃 중 오류가 발생했습니다.");
-    }
-  };
 
   return (
     <Bar>
@@ -62,7 +33,6 @@ const Navbar1 = ({ selectedDate }) => {
       </ArchieveSection>
       <SectionF>F</SectionF>
       <SectionMode onClick={toggleTheme}>Mode : {theme.modeIcon}</SectionMode>
-      <SectionLogout onClick={handleLogout}>Log Out</SectionLogout>
       <SectionNull2 />
     </Bar>
   );
@@ -147,10 +117,4 @@ const SectionNull2 = styled(Section)`
   border-right: none; /* 마지막 항목에는 오른쪽 경계선 없음 */
 `;
 
-const SectionLogout = styled(Section)`
-  width: 120px;
-  cursor: pointer;
-  z-index: 1000;
-`;
-
-export default Navbar1;
+export default NoLogoutNavbar;

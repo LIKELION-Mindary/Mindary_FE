@@ -5,9 +5,12 @@ import Navbar from "../components/Navbar/Navbar1";
 import Header from "../components/Header/Header";
 import { useTheme } from "../styles/ThemeContext";
 import DefaultExcel from "../components/Background/DefaultExcel";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import moment from "moment-timezone";
+import SelectInput from "../components/Archieve/SelectInput";
+import { axiosInstance } from "../api/api";
+import { useEffect } from "react";
 
 const Archieve = () => {
   const { theme, toggleTheme } = useTheme();
@@ -22,6 +25,104 @@ const Archieve = () => {
     : new Date(); // Fallback to current date if no date in URL
 
   const [selectedDate, setSelectedDate] = useState(initialDate);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10); // Items per page for category results
+  const [keywordItemsPerPage] = useState(5); // Items per page for keyword results
+  const [categoryResults, setCategoryResults] = useState([]);
+  const [keywordResults, setKeywordResults] = useState([
+    "Keyword Result 1",
+    "Keyword Result 2",
+    "Keyword Result 3",
+    "Keyword Result 4",
+    "Keyword Result 5",
+    "Keyword Result 6",
+    "Keyword Result 7",
+    "Keyword Result 8",
+    "Keyword Result 9",
+    "Keyword Result 10",
+    "Keyword Result 11",
+    "Keyword Result 12",
+  ]);
+
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const categories = [
+    { value: "일상", label: "일상" },
+    { value: "독서", label: "독서" },
+    { value: "영화", label: "영화" },
+    { value: "음악", label: "음악" },
+    { value: "에세이", label: "에세이" },
+    { value: "기타", label: "기타" },
+    { value: "북마크", label: "북마크" },
+  ];
+
+  // Pagination for category results
+  const indexOfLastCategoryItem = currentPage * itemsPerPage;
+  const indexOfFirstCategoryItem = indexOfLastCategoryItem - itemsPerPage;
+  const currentCategoryItems = categoryResults.slice(
+    indexOfFirstCategoryItem,
+    indexOfLastCategoryItem
+  );
+  const totalCategoryPages = Math.ceil(categoryResults.length / itemsPerPage);
+
+  // Pagination for keyword results
+  const [currentKeywordPage, setCurrentKeywordPage] = useState(1);
+  const indexOfLastKeywordItem = currentKeywordPage * keywordItemsPerPage;
+  const indexOfFirstKeywordItem = indexOfLastKeywordItem - keywordItemsPerPage;
+  const currentKeywordItems = keywordResults.slice(
+    indexOfFirstKeywordItem,
+    indexOfLastKeywordItem
+  );
+  const totalKeywordPages = Math.ceil(
+    keywordResults.length / keywordItemsPerPage
+  );
+
+  const handlePageChange = (event) => {
+    const pageNumber = Number(event.target.value);
+    if (pageNumber > 0 && pageNumber <= totalCategoryPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
+  const handleKeywordPageChange = (event) => {
+    const pageNumber = Number(event.target.value);
+    if (pageNumber > 0 && pageNumber <= totalKeywordPages) {
+      setCurrentKeywordPage(pageNumber);
+    }
+  };
+  const handleCategoryChange = (selectedValue) => {
+    console.log("Selected Category:", selectedValue);
+    setSelectedCategory(selectedValue);
+  };
+
+  useEffect(() => {
+    const GetCategoryResults = async () => {
+      if (selectedCategory) {
+        try {
+          const response = await axiosInstance.get(
+            `mindary/records/archive?category=${selectedCategory}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              },
+            }
+          );
+          setCategoryResults(response.data);
+          console.log(response.data);
+        } catch (error) {
+          console.error("Error fetching category results:", error);
+        }
+      }
+    };
+    GetCategoryResults();
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    const categoryFromUrl = queryParams.get("category");
+    if (categoryFromUrl) {
+      setSelectedCategory(categoryFromUrl);
+    }
+  }, [location.search]);
 
   return (
     <StyledThemeProvider theme={theme}>
@@ -46,10 +147,23 @@ const Archieve = () => {
             </KeywordSearching>
             <KeywordResult>
               <Title>검색결과</Title>
-              <ResultContainer>
-                <SubTitle>일상/2024.08.01</SubTitle>
-                <ResultContent>제목</ResultContent>
-              </ResultContainer>
+              {currentKeywordItems.map((item, index) => (
+                <KeywordContainer key={index}>
+                  <SubTitle>일상/2024.08.01</SubTitle>
+                  <ResultContent>{item}</ResultContent>
+                </KeywordContainer>
+              ))}
+              <PageContent>
+                <PageInfo style={{ border: "none" }}>페이지 설정</PageInfo>
+                <PageMoveInput
+                  type="number"
+                  min="1"
+                  max={totalKeywordPages}
+                  value={currentKeywordPage}
+                  onChange={handleKeywordPageChange}
+                />
+                / {totalKeywordPages}
+              </PageContent>
             </KeywordResult>
           </KeywordSection>
           <DateSection>
@@ -79,36 +193,45 @@ const Archieve = () => {
           <CategorySection>
             <KeywordSearching>
               <Title>검색</Title>
-              <SearchBar>
-                <CategoryInput placeholder="카테고리를 선택하세요." />
-                <DropdownBtn>요기</DropdownBtn>
+              <SearchBar style={{ border: "none" }}>
+                <SelectInput
+                  id="category"
+                  options={categories.map((category) => category.label)} // 옵션으로 표시할 라벨을 전달합니다.
+                  placeholder="카테고리를 선택하세요."
+                  onChange={handleCategoryChange} // 선택된 값이 변경될 때 호출되는 함수
+                />
               </SearchBar>
             </KeywordSearching>
             <KeywordResult>
-              <Title>일상</Title>
+              <Title>{selectedCategory}</Title>
               <CategoryResult>
-                <SubTitle
-                  style={{
-                    backgroundColor: theme.background,
-                  }}
-                >
-                  날짜
-                </SubTitle>
-                <ResultContent
-                  style={{
-                    borderBottom: "1px solid black",
-                    boxSizing: "border-box",
-                  }}
-                ></ResultContent>
-                <ResultContent
-                  style={{
-                    borderBottom: "1px solid black",
-                    boxSizing: "border-box",
-                    height: "30px",
-                  }}
-                >
-                  제목
-                </ResultContent>
+                <HeaderRow>
+                  <CategoryDate style={{ background: theme.background }}>
+                    날짜
+                  </CategoryDate>
+                  <CategoryTitle style={{ background: theme.background }}>
+                    제목
+                  </CategoryTitle>
+                </HeaderRow>
+                {currentCategoryItems.map((item, index) => (
+                  <CategoryContainer key={index}>
+                    <CategoryDate>
+                      {moment(item.created_at).format("YY.MM.DD")}
+                    </CategoryDate>
+                    <CategoryTitle>{item.title}</CategoryTitle>
+                  </CategoryContainer>
+                ))}
+                <PageContent1>
+                  <PageInfo>페이지 설정</PageInfo>
+                  <PageMoveInput
+                    type="number"
+                    min="1"
+                    max={totalCategoryPages}
+                    value={currentPage}
+                    onChange={handlePageChange}
+                  />
+                  / {totalCategoryPages}
+                </PageContent1>
               </CategoryResult>
             </KeywordResult>
           </CategorySection>
@@ -117,6 +240,7 @@ const Archieve = () => {
     </StyledThemeProvider>
   );
 };
+
 export default Archieve;
 
 const Mainpage = styled.div``;
@@ -195,13 +319,24 @@ const SearchBtn = styled.button`
 const KeywordResult = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  height: 510px;
+  width: 344px;
+`;
+
+const KeywordContainer = styled.div`
+  border: 1px solid black;
+  box-sizing: border-box;
+  height: 60px;
+  width: 344px;
+  margin-bottom: 30px;
 `;
 
 const ResultContainer = styled.div`
   border: 1px solid black;
   box-sizing: border-box;
   height: 60px;
+  width: 256px;
+  margin-bottom: 30px;
 `;
 
 const SubTitle = styled.span`
@@ -236,31 +371,104 @@ const InputInfo = styled.span`
   border-left: 1px solid black;
   box-sizing: border-box;
 `;
+
 const YearInput = styled.input`
   width: 109px;
   border: none;
   text-align: right;
   padding-right: 5px;
 `;
+
 const MonthInput = styled.input`
   border: none;
   padding-right: 5px;
   text-align: right;
   width: 90px;
 `;
-const CategoryInput = styled(SearchInput)``;
-const DropdownBtn = styled.button`
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-left: 1px solid black;
-  box-sizing: border-box;
-`;
+
 const CategoryResult = styled.div`
   height: 360px;
   width: 100%;
   border: 1px solid black;
-  overflow-y: auto;
   box-sizing: border-box;
+  position: relative;
+`;
+
+const PageContent = styled.div`
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  width: 343px;
+  box-sizing: border-box;
+  background-color: white;
+  border-left: 1px solid #cccccc;
+  border-bottom: 1px solid #cccccc;
+  left: 0;
+`;
+
+const PageContent1 = styled.div`
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  height: 29px;
+  box-sizing: border-box;
+  background-color: white;
+  left: 0;
+`;
+
+const PageInfo = styled.div`
+  display: flex;
+  align-items: center;
+  width: 119px;
+  height: 29px;
+  display: flex;
+  box-sizing: border-box;
+  padding-left: 10px;
+  border-right: 1px solid black;
+`;
+
+const PageMoveInput = styled.input`
+  margin-left: 5px;
+  width: 44px;
+  background-color: #e9e9e9;
+  height: 22px;
+  border: none;
+  text-align: right;
+  box-shadow: 0px 0px 2px 0px rgb(0, 0, 0, 0, 0.25) inset;
+`;
+
+const HeaderRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  background-color: #f0f0f0;
+`;
+const CategoryDate = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 400;
+  height: 29px;
+  padding-left: 10px;
+  border-bottom: 1px solid black;
+  width: 126px;
+  border-right: 1px solid black;
+  background-color: white;
+  box-sizing: border-box;
+`;
+const CategoryTitle = styled(CategoryDate)`
+  flex: 1;
+  border-right: none;
+`;
+
+const CategoryContainer = styled.div`
+  height: 30px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
 `;

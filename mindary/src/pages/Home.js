@@ -3,7 +3,7 @@ import styled, {
   ThemeProvider as StyledThemeProvider,
 } from "styled-components";
 import Header from "../components/Header/Header";
-import Navbar from "../components/Navbar/Navbar1";
+import Navbar from "../components/Navbar/NoLogoutNavbar";
 import DefaultExcel from "../components/Background/DefaultExcel";
 import kakaobtn from "../assets/images/kakao_login.png";
 import { useTheme } from "../styles/ThemeContext";
