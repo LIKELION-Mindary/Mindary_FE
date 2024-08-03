@@ -18,7 +18,12 @@ const Memo = ({ selectedDate }) => {
         setMessages([]);
 
         const response = await axiosInstance.get(
-          `/mindary?date=${formattedDate}&mode=chat`
+          `/mindary?date=${formattedDate}&mode=chat`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          }
         );
         console.log("API Response:", response.data);
 
@@ -61,9 +66,17 @@ const Memo = ({ selectedDate }) => {
       const timeString = formatTime(now.toISOString());
 
       try {
-        await axiosInstance.post(`/mindary?date=${formattedDate}&mode=chat`, {
-          content: inputValue,
-        });
+        await axiosInstance.post(
+          `/mindary?date=${formattedDate}&mode=chat`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          },
+          {
+            content: inputValue,
+          }
+        );
         setMessages((prevMessages) => [
           ...prevMessages,
           { text: inputValue, time: timeString },
@@ -123,7 +136,6 @@ const Memo = ({ selectedDate }) => {
       </Msg>
       <InputWrapper>
         <Input
-          ref={inputRef}
           placeholder="하고 싶은 말, 마음에 담아두지 마세요."
           value={inputValue}
           onChange={handleInputChange}
@@ -159,7 +171,8 @@ const InputWrapper = styled.div`
 const Input = styled.textarea`
   width: 100%;
   padding: 15px;
-  height: 90px;
+  height: 91px;
+  margin-bottom: 9px;
   outline: none;
   overflow-y: auto;
   border: none;
@@ -257,14 +270,14 @@ const BtnContent = styled.div`
 
 const SpacerSection = styled.div`
   display: flex;
-  height: 30px;
+  height: 29px;
   flex-direction: row;
   width: 100%;
   border-bottom: 1px solid #cccccc;
 `;
 
 const TimeSection = styled(SpacerSection)`
-  height: 29.5px;
+  height: 29px;
 `;
 
 const Spacer = styled.div`

@@ -44,14 +44,16 @@ const Archieve = () => {
     { value: "북마크", label: "북마크" },
   ];
 
-  // Pagination for category results
   const indexOfLastCategoryItem = currentPage * itemsPerPage;
   const indexOfFirstCategoryItem = indexOfLastCategoryItem - itemsPerPage;
   const currentCategoryItems = categoryResults.slice(
     indexOfFirstCategoryItem,
     indexOfLastCategoryItem
   );
-  const totalCategoryPages = Math.ceil(categoryResults.length / itemsPerPage);
+  const totalCategoryPages = Math.max(
+    Math.ceil(categoryResults.length / itemsPerPage),
+    1
+  );
 
   // Pagination for keyword results
   const [currentKeywordPage, setCurrentKeywordPage] = useState(1);
@@ -61,8 +63,9 @@ const Archieve = () => {
     indexOfFirstKeywordItem,
     indexOfLastKeywordItem
   );
-  const totalKeywordPages = Math.ceil(
-    keywordResults.length / keywordItemsPerPage
+  const totalKeywordPages = Math.max(
+    Math.ceil(keywordResults.length / keywordItemsPerPage),
+    1
   );
 
   const handlePageChange = (event) => {
@@ -422,6 +425,7 @@ const PageContent = styled.div`
   border-left: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
   left: 0;
+  visibility: ${(props) => (props.totalPages === 0 ? "hidden" : "visible")};
 `;
 
 const PageContent1 = styled.div`
@@ -435,6 +439,7 @@ const PageContent1 = styled.div`
   box-sizing: border-box;
   background-color: white;
   left: 0;
+  visibility: ${(props) => (props.totalPages === 0 ? "hidden" : "visible")};
 `;
 
 const PageInfo = styled.div`
@@ -462,13 +467,14 @@ const HeaderRow = styled.div`
   display: flex;
   justify-content: space-between;
   background-color: #f0f0f0;
+  box-sizing: border-box;
 `;
 const CategoryDate = styled.div`
   display: flex;
   align-items: center;
   font-size: 16px;
   font-weight: 400;
-  height: 29px;
+  height: 29.5px;
   padding-left: 10px;
   border-bottom: 1px solid black;
   width: 126px;
