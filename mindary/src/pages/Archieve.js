@@ -28,22 +28,10 @@ const Archieve = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10); // Items per page for category results
+  const [keywordResults, setKeywordResults] = useState([]);
+  const [searchKeyword, setSearchKeyword] = useState(""); // 검색 키워드 상태 추가
   const [keywordItemsPerPage] = useState(5); // Items per page for keyword results
   const [categoryResults, setCategoryResults] = useState([]);
-  const [keywordResults, setKeywordResults] = useState([
-    "Keyword Result 1",
-    "Keyword Result 2",
-    "Keyword Result 3",
-    "Keyword Result 4",
-    "Keyword Result 5",
-    "Keyword Result 6",
-    "Keyword Result 7",
-    "Keyword Result 8",
-    "Keyword Result 9",
-    "Keyword Result 10",
-    "Keyword Result 11",
-    "Keyword Result 12",
-  ]);
 
   const [selectedCategory, setSelectedCategory] = useState("");
   const categories = [
@@ -94,6 +82,26 @@ const Archieve = () => {
     console.log("Selected Category:", selectedValue);
     setSelectedCategory(selectedValue);
   };
+  const handleSearchInputChange = (event) => {
+    setSearchKeyword(event.target.value);
+  };
+
+  const handleKeywordSearch = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `mindary/records/archive?keyword=${searchKeyword}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+      setKeywordResults(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching keyword results:", error);
+    }
+  };
 
   useEffect(() => {
     const GetCategoryResults = async () => {
@@ -141,16 +149,23 @@ const Archieve = () => {
             <KeywordSearching>
               <Title>검색</Title>
               <SearchBar>
-                <SearchInput placeholder="키워드로 검색하세요." />
-                <SearchBtn>검색</SearchBtn>
+                <SearchInput
+                  placeholder="키워드로 검색하세요."
+                  value={searchKeyword} // 입력 값을 상태와 연결
+                  onChange={handleSearchInputChange}
+                />
+                <SearchBtn onClick={handleKeywordSearch}>검색</SearchBtn>
               </SearchBar>
             </KeywordSearching>
             <KeywordResult>
               <Title>검색결과</Title>
-              {currentKeywordItems.map((item, index) => (
-                <KeywordContainer key={index}>
-                  <SubTitle>일상/2024.08.01</SubTitle>
-                  <ResultContent>{item}</ResultContent>
+              {currentKeywordItems.map((item) => (
+                <KeywordContainer key={item.id}>
+                  <SubTitle>
+                    {item.category}/
+                    {moment(item.created_at).format("YYYY.MM.DD")}
+                  </SubTitle>
+                  <ResultContent>{item.title}</ResultContent>
                 </KeywordContainer>
               ))}
               <PageContent>
@@ -363,7 +378,7 @@ const ResultContent = styled.div`
 
 const InputInfo = styled.span`
   height: 29px;
-  width: 29px;
+  width: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -373,7 +388,7 @@ const InputInfo = styled.span`
 `;
 
 const YearInput = styled.input`
-  width: 109px;
+  width: 100px;
   border: none;
   text-align: right;
   padding-right: 5px;
@@ -383,7 +398,7 @@ const MonthInput = styled.input`
   border: none;
   padding-right: 5px;
   text-align: right;
-  width: 90px;
+  width: 80px;
 `;
 
 const CategoryResult = styled.div`
