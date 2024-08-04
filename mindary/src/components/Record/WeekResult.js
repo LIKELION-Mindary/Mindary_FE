@@ -28,7 +28,7 @@ const Title = styled.span`
   background-color: #f4f4f4;
 `;
 
-const PdfBlock = styled.div`
+const PdfBlock = styled.a`
   display: flex;
   padding-left: 10px;
   align-items: center;

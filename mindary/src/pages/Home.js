@@ -10,14 +10,18 @@ import { useTheme } from "../styles/ThemeContext";
 import SearchPw from "../components/Auth/SearchPw";
 import GeneralSignUp from "../components/Auth/GeneralSignUp";
 import LogoutBtn from "../components/Auth/LogoutBtn";
+import moment from "moment-timezone"; // Import timezone handling
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const { theme, toggleTheme } = useTheme();
   const [showSearchPw, setShowSearchPw] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage1, setErrorMessage1] = useState("");
+  const [errorMessage2, setErrorMessage2] = useState("");
   const [showSignUp, setShowSignUp] = useState(false);
+  const navigate = useNavigate();
 
   const REST_API_KEY = process.env.REACT_APP_KAKAO_API_KEY; // REST API KEY
   const REDIRECT_URI = process.env.REACT_APP_KAKAO_REDIRECT_URI; // Redirect URI
@@ -44,7 +48,7 @@ const Home = () => {
   
   const handleLogin = async () => {
     if (!email || !password) {
-      setErrorMessage("이메일과 비밀번호를 입력하세요.");
+      setErrorMessage2("※ 이메일 혹은 비밀번호가 일치하지 않습니다.");
       return;
     }
 
@@ -61,25 +65,28 @@ const Home = () => {
       );
 
       if (response.status === 200) {
-      // if (response.ok) {
+      // if (response.ok) {theme
         const data = await response.json();
         alert("로그인 성공:", data);
 
         localStorage.setItem("access_token", data.access_token);
         localStorage.setItem("refresh_token", data.refresh_token);
 
-        setErrorMessage("");
+        setErrorMessage1("");
         setIsLoggedIn(true); // 로그인 상태를 true로 변경
+
+        const todayDate = moment().tz("Asia/Seoul").format("YYYY-MM-DD"); ///////////////////////////
+        navigate(`/mindary?date=${todayDate}&mode=chat`);
       } else if (response.status === 400) {
-        setErrorMessage("이메일 및 비밀번호가 입력되지 않았습니다.");
+        setErrorMessage1("※ 이메일 혹은 비밀번호가 일치하지 않습니다.");
       } else if (response.status === 401) {
-        setErrorMessage("※ 존재하지 않는 계정입니다.");
+        setErrorMessage1("※ 존재하지 않는 계정입니다.");
       } else {
-        setErrorMessage("로그인 실패. 다시 시도해주세요.");
+        setErrorMessage1("로그인 실패. 다시 시도해주세요.");
       }
     } catch (error) {
       console.error("로그인 중 오류 발생:", error);
-      setErrorMessage("로그인 중 오류가 발생했습니다.");
+      setErrorMessage1("로그인 중 오류가 발생했습니다.");
     }
   };
 
@@ -93,7 +100,7 @@ const Home = () => {
       <Body>
         <LoginBody>
         {showSignUp ? (
-          <GeneralSignUp />
+          <GeneralSignUp theme={theme}/>
         ) : (
           <LoginSection>
             <Title>로그인</Title>
@@ -136,7 +143,8 @@ const Home = () => {
             {showSearchPw && <SearchPw />}
           </LoginSection>
         )}
-          {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+          {errorMessage1 && <ErrorMessage1>{errorMessage1}</ErrorMessage1>}
+          {errorMessage2 && <ErrorMessage2>{errorMessage2}</ErrorMessage2>}
         </LoginBody>
       </Body>
     </StyledThemeProvider>
@@ -320,7 +328,7 @@ const KakaoBtn = styled.div`
   }
 `;
 
-const ErrorMessage = styled.div`
+const ErrorMessage1 = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -328,11 +336,13 @@ const ErrorMessage = styled.div`
   font-size: 16px;
   font-weight: 700;
   height: 29px;
-  width: 183px;
+  width: 350px;
   margin-top: 60px;
   padding-left: 10px;
   text-align: center;
 `;
+const ErrorMessage2 = styled(ErrorMessage1)`
+margin-top:90px;`
 
 const LoginBody = styled.div`
   display: flex;

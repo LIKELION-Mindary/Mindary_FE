@@ -1,14 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, {ThemeProvider as StyledThemeProvider,} from 'styled-components';
 import Home from "../../pages/Home.js";
-
 
 // Reuse your styled-components here
 const StyledTable = styled.table`
   border-collapse: collapse;
   width: auto;
-  font-family: 'Pretendard', sans-serif;
+
 `;
 
 const Cell = styled.td`
@@ -22,7 +21,7 @@ const Cell = styled.td`
   padding: 0px;
   color: #000;
   background-color: ${(props) => props.bgColor || 'none'}; /* Not 'white'*/
-  font-family: ${(props) => props.fontFamily || "Pretendard Variable"};
+  font-family: ${(props) => props.fontFamily || "PreVariable"};
   font-size: ${(props) => props.fontSize || '16px'};
   font-style: ${(props) => props.fontStyle || 'normal'};
   font-weight: ${(props) => props.fontWidth || '900'};
@@ -47,6 +46,7 @@ const Button = styled.button`
 const ErrorMessage = styled.div`
   color: red;
   font-size: 16px;
+  // font-family: 'PreVariable'; 폰트를 GlobalStyles.js로 적용한댄다.
   text-align: left;
 `;
 
@@ -57,6 +57,7 @@ const StartButton = styled.div`
   width: 100px;
   cursor: pointer;
   text-align: center;
+  font-family: 'PreVariable';
 `;
 
 const ButtonWrapper = styled.div`
@@ -64,7 +65,7 @@ const ButtonWrapper = styled.div`
   justify-content: flex-end; // Align the button to the right
 `;
 
-const GeneralSignUp = () => {
+const GeneralSignUp = ({theme}) => {
   const [emailValue, setEmailValue] = useState({ email: '' });
   const [isVerified, setIsVerified] = useState(false);
   const [isTimeForVeriCode, setIsTimeForVeriCode] = useState(false);
@@ -187,6 +188,7 @@ const GeneralSignUp = () => {
   const hasErrors = Object.keys(errors).some((key) => errors[key]);
 
   return (
+    <StyledThemeProvider theme={theme}>
       <StyledTable>
         <tbody>
           <tr>
@@ -196,8 +198,8 @@ const GeneralSignUp = () => {
             <Cell width="395px" borderTop="none" borderRight="none" borderBottom='none' borderLeft="none"></Cell>
           </tr>
           <tr>
-            <Cell width="119px" bgColor="#E6EEFA">항목</Cell>
-            <Cell colSpan="2" bgColor="#E6EEFA">감정을 기록하고 마음을 정리해요.</Cell>
+            <Cell bgColor={({ theme }) => theme.background} width="119px" >항목</Cell>
+            <Cell bgColor={({ theme }) => theme.background} colSpan="2">감정을 기록하고 마음을 정리해요.</Cell>
             <Cell width="395px" borderTop="none" borderRight="none" borderBottom='none' borderLeft="none"></Cell>
           </tr>
           <tr>
@@ -310,6 +312,7 @@ const GeneralSignUp = () => {
           </tr>
         </tbody>
       </StyledTable>
+    </StyledThemeProvider>
   );
 };
 
