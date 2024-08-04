@@ -362,6 +362,7 @@ const BodyContainer = styled.div`
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  font-family: 'PreVariable';
 `;
 
 const Body = styled.div`
@@ -392,6 +393,7 @@ const Container = styled.div`
   top: 171px;
   left: 767px;
   width: 480px;
+  font-family: 'Pretendard';
 `;
 
 const TitleBox = styled.div`

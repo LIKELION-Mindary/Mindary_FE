@@ -300,6 +300,7 @@ const Container = styled.div`
   position: fixed;
   display: flex;
   justify-content: center;
+  font-family: 'PreVariable';
 `;
 const KeywordSection = styled.div`
   width: 344px;
