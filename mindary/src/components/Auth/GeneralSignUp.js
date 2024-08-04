@@ -7,7 +7,7 @@ import Home from "../../pages/Home.js";
 const StyledTable = styled.table`
   border-collapse: collapse;
   width: auto;
-
+  font-family: 'PreVariable'; /* 폰트를 GlobalStyles.js로 적용한댄다.*/
 `;
 
 const Cell = styled.td`
@@ -21,7 +21,6 @@ const Cell = styled.td`
   padding: 0px;
   color: #000;
   background-color: ${(props) => props.bgColor || 'none'}; /* Not 'white'*/
-  font-family: ${(props) => props.fontFamily || "PreVariable"};
   font-size: ${(props) => props.fontSize || '16px'};
   font-style: ${(props) => props.fontStyle || 'normal'};
   font-weight: ${(props) => props.fontWidth || '900'};
@@ -33,6 +32,9 @@ const Input = styled.input`
   border: none;
   text-align: left;
   background-color: white;
+  font-family: 'PreVariable';
+  font-style: normal;
+  font-weight: 700;
 `;
 
 const Button = styled.button`
@@ -41,12 +43,14 @@ const Button = styled.button`
   border: none;
   text-align: left;
   background-color: white;
+  font-family: 'PreVariable';
+  font-style: normal;
+  font-weight: 700;
 `;
 
 const ErrorMessage = styled.div`
   color: red;
   font-size: 16px;
-  // font-family: 'PreVariable'; 폰트를 GlobalStyles.js로 적용한댄다.
   text-align: left;
 `;
 

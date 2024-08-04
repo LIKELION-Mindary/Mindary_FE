@@ -77,6 +77,7 @@ const Detail = styled.div`
 const Month = styled.div`
   display: flex;
   flex-direction: column;
+  font-family: 'PreVariable';
 `;
 
 export default MonthResult;

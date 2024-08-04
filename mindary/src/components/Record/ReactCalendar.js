@@ -331,6 +331,7 @@ const Sidebar = styled.div`
   background: transparent;
   border: 1px solid black;
   z-index: 1000;
+  font-family: 'PreVariable';
 `;
 
 const YearSelector = styled.div`
@@ -388,6 +389,7 @@ const SidebarToggleButton = styled.button`
 export const StyledCalendar = styled(CalendarComponent)`
   width: 100%;
   max-width: 350px; /* Ensure calendar width fits the container */
+  font-family: 'PreVariable';
   .react-calendar__month-view__days {
     min-height: 150px; /* Ensure enough height for 6 weeks */
   }
@@ -397,4 +399,5 @@ export const DateText = styled.div`
   display: none;
   flex-direction: row;
   cursor: pointer;
+  
 `;

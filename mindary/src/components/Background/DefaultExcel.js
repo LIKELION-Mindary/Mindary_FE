@@ -109,6 +109,7 @@ const ExcelBody = styled.div`
   height: 100%;
   top: 52px;
   left: 0;
+  font-family: 'PreVariable'; /* Apply "Pretendard Variable" to all letters in the body part of the excel background */
 `;
 
 const ExcelRow = styled.div`

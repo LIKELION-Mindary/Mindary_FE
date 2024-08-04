@@ -16,6 +16,7 @@ const Container = styled.div`
   justify-content: center;
   width: 342px;
   border: 1px solid black;
+  font-family: 'PreVariable';
 `;
 
 const Title = styled.span`

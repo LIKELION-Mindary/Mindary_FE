@@ -161,6 +161,7 @@ const Body = styled.div`
   left: 510px;
   top: 261px;
   position: fixed;
+  font-family: 'PreVariable';
 `;
 
 const HeaderBase = styled.div`
@@ -251,6 +252,7 @@ const EmailInput = styled.input`
     color: #cccccc;
     font-size: 16px;
     font-weight: 700;
+    font-family: 'PreVariable'; // Body에 font-family: 'PreVariable'; 이거를 써줬지만, 여기는 또 따로 더 써줘야 적용됨
   }
 
   &:-webkit-autofill {
