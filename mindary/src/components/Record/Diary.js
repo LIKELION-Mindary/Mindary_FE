@@ -13,6 +13,7 @@ const Diary = ({ selectedDate }) => {
   const [isChat, setIsChat] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedRecord, setSelectedRecord] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [memos, setMemos] = useState([]);
   const [records, setRecords] = useState([]);
@@ -21,7 +22,19 @@ const Diary = ({ selectedDate }) => {
     content: "",
     liked: false,
   });
-
+  const handleRecordSelect = (record) => {
+    setSelectedRecord(record);
+    setSelectedCategory(record.category); // Ensure category is set for editing
+    setFormData({
+      title: record.title,
+      content: record.content,
+      liked: record.liked,
+    });
+    setIsEditing(true);
+    setCurrentStep(1);
+  };
+  const isSelectedRecord = (record) =>
+    selectedRecord && selectedRecord.id === record.id;
   const formattedDate = moment(selectedDate)
     .tz("Asia/Seoul")
     .format("YYYY-MM-DD");
@@ -47,9 +60,14 @@ const Diary = ({ selectedDate }) => {
   const getMemos = async () => {
     try {
       const response = await axiosInstance.get(
-        `/mindary?date=${formattedDate}&mode=chat`
+        `/mindary?date=${formattedDate}&mode=chat`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
       );
-      setMemos(response.data.chats);
+      setMemos(response.data);
     } catch (error) {
       console.error("Error fetching memos:", error);
     }
@@ -58,9 +76,14 @@ const Diary = ({ selectedDate }) => {
   const getRecords = async () => {
     try {
       const response = await axiosInstance.get(
-        `/mindary?date=${formattedDate}&mode=record`
+        `/mindary?date=${formattedDate}&mode=record`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
       );
-      setRecords(response.data.records);
+      setRecords(response.data);
     } catch (error) {
       console.error("Error fetching records:", error);
     }
@@ -73,16 +96,36 @@ const Diary = ({ selectedDate }) => {
   };
 
   const handleEditClick = () => {
-    setIsEditing(true);
-    setCurrentStep(0);
+    if (selectedRecord) {
+      setIsEditing(true);
+      setCurrentStep(1);
+    } else {
+      setIsEditing(true);
+      setCurrentStep(0);
+      setFormData({
+        title: "",
+        content: "",
+        liked: false,
+      });
+      setSelectedCategory(null);
+    }
   };
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
   };
-
+  const truncateText = (text, maxLength) => {
+    return text.length > maxLength
+      ? text.slice(0, maxLength) + "\u00B7" + "\u00B7" + "\u00B7"
+      : text;
+  };
   const handlePreviousStep = () => {
-    if (currentStep === 1) {
+    if (currentStep === 1 && selectedRecord) {
+      setIsEditing(false);
+      setSelectedRecord(null); // Clear the selected record
+      setCurrentStep(0); // Go back to the list of records
+    } else if (currentStep === 1) {
+      setIsEditing(false);
       setSelectedCategory(null);
       setCurrentStep(0);
     } else {
@@ -98,34 +141,79 @@ const Diary = ({ selectedDate }) => {
     }
   };
   const handleSave = async () => {
-    try {
-      await axiosInstance.post(
-        `/mindary?date=${formattedDate}&mode=record`,
-        {
-          title: formData.title,
-          category: selectedCategory,
-          content: formData.content,
-          liked: formData.liked,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            "Content-Type": "application/json",
+    if (selectedRecord) {
+      try {
+        await axiosInstance.patch(
+          `/mindary/${selectedRecord.id}?date=${formattedDate}&mode=record`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
           },
-        }
-      );
-      alert("저장되었습니다.");
-      setIsEditing(false);
-      setFormData({ title: "", content: "", liked: false }); // Reset form data
-      getRecords();
-    } catch (error) {
-      console.error("Failed to post data:", error);
-      alert("저장 실패");
+          {
+            title: formData.title,
+            content: formData.content,
+            liked: formData.liked,
+          }
+        );
+        alert("수정되었습니다.");
+      } catch (error) {
+        console.error("Failed to update data:", error);
+        alert("수정 실패");
+      }
+    } else {
+      try {
+        await axiosInstance.post(
+          `/mindary?date=${formattedDate}&mode=record`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          },
+          {
+            title: formData.title,
+            category: selectedCategory,
+            content: formData.content,
+            liked: formData.liked,
+          }
+        );
+        alert("저장되었습니다.");
+      } catch (error) {
+        console.error("Failed to post data:", error);
+        alert("저장 실패");
+      }
+    }
+    setIsEditing(false);
+    setSelectedRecord(null);
+    setFormData({ title: "", content: "", liked: false }); // Reset form data
+    getRecords();
+  };
+  const handleDelete = async () => {
+    if (selectedRecord) {
+      try {
+        await axiosInstance.delete(
+          `/mindary/${selectedRecord.id}?date=${formattedDate}&mode=record`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          }
+        );
+        alert("삭제되었습니다.");
+        setSelectedRecord(null);
+        setIsEditing(false);
+        getRecords();
+      } catch (error) {
+        console.error("Failed to delete data:", error);
+        alert("삭제 실패");
+      }
     }
   };
+
   const handleFormDataChange = (newData) => {
     setFormData((prev) => ({ ...prev, ...newData }));
   };
+  const getSaveButtonText = () => (selectedRecord ? "수정하기" : "등록하기");
 
   return (
     <Container>
@@ -141,7 +229,9 @@ const Diary = ({ selectedDate }) => {
             <SubTitle>
               <SubTitle1>분야</SubTitle1>
               <SubTitle2>제목</SubTitle2>
-              <SubTitle3>미리보기</SubTitle3>
+              <SubTitle3>
+                {isEditing && currentStep === 1 ? "본문" : "미리보기"}
+              </SubTitle3>
             </SubTitle>
             <Content isEditing={isEditing} currentStep={currentStep}>
               {isEditing ? (
@@ -155,8 +245,8 @@ const Diary = ({ selectedDate }) => {
                           isSelected={selectedCategory === category}
                         >
                           <WriteCategory>{category}</WriteCategory>
-                          <WriteTitle>&nbsp;</WriteTitle>
-                          <WriteContent>&nbsp;</WriteContent>
+                          <WriteTitle />
+                          <WriteContent />
                         </WriteItem>
                       )
                     )}
@@ -171,10 +261,16 @@ const Diary = ({ selectedDate }) => {
                 )
               ) : (
                 records.map((record) => (
-                  <Record key={record.id}>
+                  <Record
+                    key={record.id}
+                    onClick={() => handleRecordSelect(record)}
+                    isSelected={isSelectedRecord(record)}
+                  >
                     <Category>{record.category}</Category>
-                    <RecordTitle>{record.title}</RecordTitle>
-                    <RecordContent>{record.content}</RecordContent>
+                    <RecordTitle>{truncateText(record.title, 13)}</RecordTitle>
+                    <RecordContent>
+                      {truncateText(record.content, 89)}
+                    </RecordContent>
                   </Record>
                 ))
               )}
@@ -199,7 +295,12 @@ const Diary = ({ selectedDate }) => {
                       <PreviousBtn onClick={handlePreviousStep}>
                         이전 단계
                       </PreviousBtn>
-                      <SaveBtn onClick={handleSave}>등록하기</SaveBtn>
+                      {selectedRecord && (
+                        <DeleteBtn onClick={handleDelete}>삭제하기</DeleteBtn>
+                      )}
+                      <SaveBtn onClick={handleSave}>
+                        {getSaveButtonText()}
+                      </SaveBtn>
                     </>
                   )}
                 </>
@@ -304,21 +405,36 @@ const SubTitle3 = styled(SubTitle1)`
 
 const Record = styled.div`
   display: flex;
-  border-bottom: 1px solid black;
   flex-direction: row;
   width: 100%;
   height: 100%;
+  cursor: pointer;
   box-sizing: border-box;
+  border-top: ${(props) => (props.isSelected ? "1.5px solid #0066FF" : "none")};
+  border-bottom: ${(props) =>
+    props.isSelected ? "1.5px solid #0066FF" : "1px solid black"};
+  border-left: ${(props) =>
+    props.isSelected ? "1.5px solid #0066FF" : "none"};
+  border-right: ${(props) =>
+    props.isSelected ? "1.5px solid #0066FF" : "none"};
+  transform: ${(props) => (props.isSelected ? "translateZ(5px)" : "none")};
 `;
 
 const RecordTitle = styled(SubTitle2)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 89px;
   background-color: white;
   width: 77px;
+  text-align: center;
+  font-weight: 400;
 `;
 
 const RecordContent = styled(SubTitle3)`
   background-color: white;
+  font-weight: 400;
+  text-align: center;
 `;
 
 const Category = styled(SubTitle1)`
@@ -417,3 +533,6 @@ const PreviousBtn = styled.button`
 `;
 
 const NextBtn = styled(PreviousBtn)``;
+const DeleteBtn = styled(WriteBtn)`
+  margin-right: 70px;
+`;
