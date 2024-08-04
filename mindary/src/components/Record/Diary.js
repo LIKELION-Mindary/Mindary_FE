@@ -146,14 +146,14 @@ const Diary = ({ selectedDate }) => {
         await axiosInstance.patch(
           `/mindary/${selectedRecord.id}?date=${formattedDate}&mode=record`,
           {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            },
-          },
-          {
             title: formData.title,
             content: formData.content,
             liked: formData.liked,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
           }
         );
         alert("수정되었습니다.");
@@ -166,15 +166,15 @@ const Diary = ({ selectedDate }) => {
         await axiosInstance.post(
           `/mindary?date=${formattedDate}&mode=record`,
           {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            },
-          },
-          {
             title: formData.title,
             category: selectedCategory,
             content: formData.content,
             liked: formData.liked,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
           }
         );
         alert("저장되었습니다.");
@@ -426,7 +426,7 @@ const RecordTitle = styled(SubTitle2)`
   align-items: center;
   height: 89px;
   background-color: white;
-  width: 77px;
+  width: 73px;
   text-align: center;
   font-weight: 400;
 `;
@@ -438,7 +438,7 @@ const RecordContent = styled(SubTitle3)`
 `;
 
 const Category = styled(SubTitle1)`
-  width: 45px;
+  width: 43px;
   background-color: ${({ theme }) => theme.background};
 `;
 
