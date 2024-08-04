@@ -11,6 +11,7 @@ import moment from "moment-timezone";
 import SelectInput from "../components/Archieve/SelectInput";
 import { axiosInstance } from "../api/api";
 import { useEffect } from "react";
+import DetailModal from "../components/Archieve/DetailModal";
 
 const Archieve = () => {
   const { theme, toggleTheme } = useTheme();
@@ -32,8 +33,9 @@ const Archieve = () => {
   const [searchKeyword, setSearchKeyword] = useState(""); // 검색 키워드 상태 추가
   const [keywordItemsPerPage] = useState(5); // Items per page for keyword results
   const [categoryResults, setCategoryResults] = useState([]);
-
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("일상");
+  const [selectedItemId, setSelectedItemId] = useState(null);
   const categories = [
     { value: "일상", label: "일상" },
     { value: "독서", label: "독서" },
@@ -74,6 +76,15 @@ const Archieve = () => {
       setCurrentPage(pageNumber);
     }
   };
+  const openModal = (itemId) => {
+    setSelectedItemId(itemId);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedItemId(null);
+  };
 
   const handleKeywordPageChange = (event) => {
     const pageNumber = Number(event.target.value);
@@ -92,7 +103,7 @@ const Archieve = () => {
   const handleKeywordSearch = async () => {
     try {
       const response = await axiosInstance.get(
-        `mindary/records/archive?keyword=${searchKeyword}`,
+        `mindary/records/archive?keyword=${searchKeyword}&order_by=desc`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -111,7 +122,7 @@ const Archieve = () => {
       if (selectedCategory) {
         try {
           const response = await axiosInstance.get(
-            `mindary/records/archive?category=${selectedCategory}`,
+            `mindary/records/archive?category=${selectedCategory}&order_by=desc`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -150,7 +161,7 @@ const Archieve = () => {
         <Container>
           <KeywordSection>
             <KeywordSearching>
-              <Title>검색</Title>
+              <Title>제목 검색</Title>
               <SearchBar>
                 <SearchInput
                   placeholder="키워드로 검색하세요."
@@ -161,15 +172,20 @@ const Archieve = () => {
               </SearchBar>
             </KeywordSearching>
             <KeywordResult>
-              <Title>검색결과</Title>
               {currentKeywordItems.map((item) => (
-                <KeywordContainer key={item.id}>
-                  <SubTitle>
-                    {item.category}/
-                    {moment(item.created_at).format("YYYY.MM.DD")}
-                  </SubTitle>
-                  <ResultContent>{item.title}</ResultContent>
-                </KeywordContainer>
+                <>
+                  <Title>검색결과</Title>
+                  <KeywordContainer
+                    key={item.id}
+                    onClick={() => openModal(item.id)}
+                  >
+                    <SubTitle>
+                      {item.category}/
+                      {moment(item.created_at).format("YYYY.MM.DD")}
+                    </SubTitle>
+                    <ResultContent>{item.title}</ResultContent>
+                  </KeywordContainer>
+                </>
               ))}
               <PageContent>
                 <PageInfo style={{ border: "none" }}>페이지 설정</PageInfo>
@@ -186,7 +202,7 @@ const Archieve = () => {
           </KeywordSection>
           <DateSection>
             <KeywordSearching>
-              <Title>검색</Title>
+              <Title>결산 검색</Title>
               <SearchBar>
                 <YearInput placeholder="2024" />
                 <InputInfo>년</InputInfo>
@@ -210,7 +226,7 @@ const Archieve = () => {
           </DateSection>
           <CategorySection>
             <KeywordSearching>
-              <Title>검색</Title>
+              <Title>카테고리 선택</Title>
               <SearchBar style={{ border: "none" }}>
                 <SelectInput
                   id="category"
@@ -232,7 +248,10 @@ const Archieve = () => {
                   </CategoryTitle>
                 </HeaderRow>
                 {currentCategoryItems.map((item, index) => (
-                  <CategoryContainer key={index}>
+                  <CategoryContainer
+                    key={index}
+                    onClick={() => openModal(item.id)}
+                  >
                     <CategoryDate>
                       {moment(item.created_at).format("YY.MM.DD")}
                     </CategoryDate>
@@ -252,7 +271,12 @@ const Archieve = () => {
                 </PageContent1>
               </CategoryResult>
             </KeywordResult>
-          </CategorySection>
+          </CategorySection>{" "}
+          <DetailModal
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            itemId={selectedItemId}
+          />
         </Container>
       </Mainpage>
     </StyledThemeProvider>
@@ -346,6 +370,7 @@ const KeywordContainer = styled.div`
   box-sizing: border-box;
   height: 60px;
   width: 344px;
+  cursor: pointer;
   margin-bottom: 30px;
 `;
 
@@ -489,7 +514,9 @@ const CategoryTitle = styled(CategoryDate)`
 
 const CategoryContainer = styled.div`
   height: 30px;
+  cursor: pointer;
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
+  background-color: white;
 `;

@@ -172,7 +172,6 @@ const Input = styled.textarea`
   width: 100%;
   padding: 15px;
   height: 91px;
-  margin-bottom: 9px;
   outline: none;
   overflow-y: auto;
   border: none;
