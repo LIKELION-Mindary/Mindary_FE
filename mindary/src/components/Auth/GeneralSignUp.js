@@ -68,8 +68,8 @@ const GeneralSignUp = () => {
   const [emailValue, setEmailValue] = useState({ email: '' });
   const [isVerified, setIsVerified] = useState(false);
   const [isTimeForVeriCode, setIsTimeForVeriCode] = useState(false);
-  const [isWithinTime, setIsWithinTime] = useState(false);
-  const [timeCount, setTimeCount] = useState(0);
+  // const [isWithinTime, setIsWithinTime] = useState(false);
+  // const [timeCount, setTimeCount] = useState(0);
   const [veriCodeValue, setVeriCodeValue] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -92,8 +92,8 @@ const GeneralSignUp = () => {
       }).then((res) => {
         if (res.status === 200) {
           setIsTimeForVeriCode(true);
-          setIsWithinTime(true);
-          setTimeCount(180);
+          // setIsWithinTime(true);
+          // setTimeCount(180);
           alert('인증번호가 이메일로 전송되었습니다.');
         } else if (res.status === 400) {
           setErrors({ email: '※ 해당 이메일로 가입된 계정이 존재합니다.' });
@@ -104,10 +104,6 @@ const GeneralSignUp = () => {
     },
     [emailValue]
   );
-
-  const handleVeriCode = (e) => {
-    setVeriCodeValue(e.target.value);
-  };
 
   const onValidVeriCode = (e) => {
     e.preventDefault();
@@ -160,7 +156,7 @@ const GeneralSignUp = () => {
       }));
     }
   };
-  
+
   const onSubmitSignUp = (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
@@ -191,7 +187,6 @@ const GeneralSignUp = () => {
   const hasErrors = Object.keys(errors).some((key) => errors[key]);
 
   return (
-    <>
       <StyledTable>
         <tbody>
           <tr>
@@ -234,7 +229,7 @@ const GeneralSignUp = () => {
                 name="veriCode"
                 value={veriCodeValue}
                 placeholder="인증코드를 입력해주세요."
-                onChange={handleVeriCode}
+                onChange={(e) => setVeriCodeValue(e.target.value)}
                 disabled={!isTimeForVeriCode || isVerified}
               />
             </Cell>
@@ -315,7 +310,6 @@ const GeneralSignUp = () => {
           </tr>
         </tbody>
       </StyledTable>
-    </>
   );
 };
 
