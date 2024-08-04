@@ -1,6 +1,8 @@
 import React, { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import '../styles/GeneralSignUp.css';
+import Home from "../../pages/Home.js";
+
 
 // Reuse your styled-components here
 const StyledTable = styled.table`
@@ -74,6 +76,7 @@ const GeneralSignUp = () => {
   const [nickname, setNickname] = useState('');
   const [errors, setErrors] = useState({});
 
+  const navigate = useNavigate();
   const emailRegExpr = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const passwordRegExpr = /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[a-z\d!@#$%^&*]{8,12}$/;
 
@@ -93,7 +96,7 @@ const GeneralSignUp = () => {
           setTimeCount(180);
           alert('인증번호가 이메일로 전송되었습니다.');
         } else if (res.status === 400) {
-          setErrors({ email: '※ 유효하지 않은 이메일입니다.' });
+          setErrors({ email: '※ 해당 이메일로 가입된 계정이 존재합니다.' });
         } else {
           setErrors({ email: '※ 오류가 발생했습니다.' });
         }
@@ -104,37 +107,6 @@ const GeneralSignUp = () => {
 
   const handleVeriCode = (e) => {
     setVeriCodeValue(e.target.value);
-  };
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-    if (!passwordRegExpr.test(e.target.value)) {
-      setErrors((prev) => ({
-        ...prev,
-        password: '※ 8~12 자리 영소문자, 숫자, 특수문자 조합으로 입력해주세요',
-      }));
-    } else {
-      setErrors((prev) => ({
-        ...prev,
-        password: '',
-      }));
-    }
-  };
-
-  const handleConfirmPasswordChange = (e) => {
-    const value = e.target.value;
-    setConfirmPassword(value);
-    if (value !== password) {
-      setErrors((prev) => ({
-        ...prev,
-        confirmPassword: '비밀번호가 일치하지 않습니다.',
-      }));
-    } else {
-      setErrors((prev) => ({
-        ...prev,
-        confirmPassword: '',
-      }));
-    }
   };
 
   const onValidVeriCode = (e) => {
@@ -158,6 +130,37 @@ const GeneralSignUp = () => {
     });
   };
 
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+    if (!passwordRegExpr.test(e.target.value)) {
+      setErrors((prev) => ({
+        ...prev,
+        password: '※ 8~12 자리 영소문자, 숫자, 특수문자 조합으로 입력해주세요',
+      }));
+    } else {
+      setErrors((prev) => ({
+        ...prev,
+        password: '',
+      }));
+    }
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    const value = e.target.value;
+    setConfirmPassword(value);
+    if (value !== password) {
+      setErrors((prev) => ({
+        ...prev,
+        confirmPassword: '※ 비밀번호가 일치하지 않습니다.',
+      }));
+    } else {
+      setErrors((prev) => ({
+        ...prev,
+        confirmPassword: '',
+      }));
+    }
+  };
+  
   const onSubmitSignUp = (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
@@ -176,8 +179,10 @@ const GeneralSignUp = () => {
     }).then((res) => {
       if (res.status === 201) {
         alert('회원가입 성공');
+        navigate(<Home></Home>);
       } else {
         setErrors({ form: '회원가입에 실패했습니다.' });
+        alert(errors.form);
       }
     });
   };
@@ -249,10 +254,10 @@ const GeneralSignUp = () => {
             <Cell width="119px" fontSize="14px">비밀번호</Cell>
             <Cell colSpan="2" textAlign="left">
               &nbsp;<Input
-                // type="password"
+                type="password" //////////////////////////////////
                 value={password}
                 onChange={handlePasswordChange}
-                placeholder="8~12 자리 영소문자, 숫자, 특수문자 조합"
+                placeholder="※ 8~12 자리 영소문자, 숫자, 특수문자 조합으로 입력해주세요."
                 disabled={!isVerified}
               />
             </Cell>
@@ -264,7 +269,7 @@ const GeneralSignUp = () => {
             <Cell width="119px" fontSize="14px">비밀번호 확인</Cell>
             <Cell colSpan="2" textAlign="left">
               &nbsp;<Input
-                // type="password"
+                type="password" //////////////////////////////////////////
                 value={confirmPassword}
                 onChange={handleConfirmPasswordChange}
                 placeholder="8~12 자리 영소문자, 숫자, 특수문자 조합"
@@ -273,9 +278,7 @@ const GeneralSignUp = () => {
               {errors.confirmPassword && (
                 <ErrorMessage>{errors.confirmPassword}</ErrorMessage>)}
             </Cell>
-            <Cell width="395px" borderTop="none" borderRight="none" borderBottom='none' borderLeft="none">
-              {errors.form && <ErrorMessage>&nbsp;{errors.form}</ErrorMessage>}
-            </Cell>
+            <Cell width="395px" borderTop="none" borderRight="none" borderBottom='none' borderLeft="none"/>
           </tr>
           <tr>
             <Cell width="119px" fontSize="14px">닉네임</Cell>
@@ -288,7 +291,7 @@ const GeneralSignUp = () => {
                 disabled={!isVerified}
               />
             </Cell>
-            <Cell width="395px" borderTop="none" borderRight="none" borderBottom='none' borderLeft="none" />
+            <Cell width="395px" borderTop="none" borderRight="none" borderBottom='none' borderLeft="none"/>
           </tr>
           <tr>
             <Cell colSpan="3">

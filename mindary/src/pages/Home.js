@@ -8,6 +8,8 @@ import DefaultExcel from "../components/Background/DefaultExcel";
 import kakaobtn from "../assets/images/kakao_login.png";
 import { useTheme } from "../styles/ThemeContext";
 import SearchPw from "../components/Auth/SearchPw";
+import GeneralSignUp from "../components/Auth/GeneralSignUp";
+import LogoutBtn from "../components/Auth/LogoutBtn";
 
 const Home = () => {
   const { theme, toggleTheme } = useTheme();
@@ -15,6 +17,7 @@ const Home = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [showSignUp, setShowSignUp] = useState(false);
 
   const REST_API_KEY = process.env.REACT_APP_KAKAO_API_KEY; // REST API KEY
   const REDIRECT_URI = process.env.REACT_APP_KAKAO_REDIRECT_URI; // Redirect URI
@@ -34,13 +37,49 @@ const Home = () => {
       console.error("Login failed", error);
     }
   };
-  const handleLogin = () => {
-    const accountExists = false;
+  const handleSignupClick = () => {
+    setShowSignUp(true); // Show the sign-up page
+    setShowSearchPw(false); // Hide the password search if open
+  };
+  
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setErrorMessage("이메일과 비밀번호를 입력하세요.");
+      return;
+    }
 
-    if (!accountExists) {
-      setErrorMessage("※ 존재하지 않는 계정입니다.");
-    } else {
-      setErrorMessage("");
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/mindary/accounts/original/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+
+      if (response.status === 200) {
+      // if (response.ok) {
+        const data = await response.json();
+        alert("로그인 성공:", data);
+
+        localStorage.setItem("access_token", data.access_token);
+        localStorage.setItem("refresh_token", data.refresh_token);
+
+        setErrorMessage("");
+        setIsLoggedIn(true); // 로그인 상태를 true로 변경
+      } else if (response.status === 400) {
+        setErrorMessage("이메일 및 비밀번호가 입력되지 않았습니다.");
+      } else if (response.status === 401) {
+        setErrorMessage("※ 존재하지 않는 계정입니다.");
+      } else {
+        setErrorMessage("로그인 실패. 다시 시도해주세요.");
+      }
+    } catch (error) {
+      console.error("로그인 중 오류 발생:", error);
+      setErrorMessage("로그인 중 오류가 발생했습니다.");
     }
   };
 
@@ -53,6 +92,9 @@ const Home = () => {
       <Navbar toggleTheme={toggleTheme} />
       <Body>
         <LoginBody>
+        {showSignUp ? (
+          <GeneralSignUp />
+        ) : (
           <LoginSection>
             <Title>로그인</Title>
             <InputSection>
@@ -73,17 +115,18 @@ const Home = () => {
                 <Label htmlFor="password">비밀번호</Label>
                 <PwInput
                   id="password"
+                  type="password"
                   placeholder="비밀번호를 입력해주세요."
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </PwSection>
               <SelectBar>
-                <Signup>회원가입</Signup>
+                <Signup onClick={handleSignupClick}>회원가입</Signup>
                 <SearchPwbtn onClick={handleSearchPwClick}>
                   비밀번호 찾기
                 </SearchPwbtn>
-                <LoginBtn onClick={handleLogin}>로그인</LoginBtn>
+                {!isLoggedIn ? (<LogoutBtn />) : (<LoginBtn onClick={handleLogin}>로그인</LoginBtn>)}
               </SelectBar>
               <SimpleLoginWrapper>
                 <SimpleLogin>간편 로그인</SimpleLogin>
@@ -92,6 +135,7 @@ const Home = () => {
             </InputSection>
             {showSearchPw && <SearchPw />}
           </LoginSection>
+        )}
           {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </LoginBody>
       </Body>
