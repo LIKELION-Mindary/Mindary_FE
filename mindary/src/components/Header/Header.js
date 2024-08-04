@@ -24,7 +24,6 @@ const Logo = styled.img`
 const LogoContainer = styled.div`
   display: flex;
   align-items: center;
-  cursor: pointer;
   justify-content: center;
 `;
 
