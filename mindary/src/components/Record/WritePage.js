@@ -32,7 +32,7 @@ export default WritePage;
 
 const Wrapper = styled.div`
   display: flex;
-  height: 480px;
+  height: 500px;
   flex-direction: row;
   overflow-y: hidden;
 `;
@@ -41,18 +41,18 @@ const Category = styled.div`
   display: flex;
   justify-content: center;
   width: 43px;
-  padding-top: 30px;
+  padding-top: 15px;
   font-size: 14px;
   font-weight: 700;
   background-color: white;
-  height: 98%;
+  height: 100%;
   border-right: 1px solid black;
 `;
 
 const Title = styled.textarea`
   display: flex;
   padding: 5px;
-  padding-top: 25px;
+  padding-top: 15px;
   width: 63px;
   border: none;
   background-color: white;
@@ -75,12 +75,12 @@ const Content = styled.textarea`
   border: none;
   background-color: white;
   font-size: 13px;
+  height: 100%;
   &::placeholder {
     color: #d0d0d0;
     font-size: 13px;
     padding: 5px;
   }
-  padding-top: 25px;
   padding-left: 10px;
-  height: 100%;
+  padding-top: 15px;
 `;

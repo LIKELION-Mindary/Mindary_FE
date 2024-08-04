@@ -5,6 +5,8 @@ import Memo from "./Memo";
 import { Toggle } from "./Toggle";
 import WritePage from "./WritePage";
 import { axiosInstance } from "../../api/api";
+import BookmarkEmpty from "../../assets/images/emptyBookmark.svg"; // Adjust path as needed
+import BookmarkFilled from "../../assets/images/FilledBookmark.svg";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const Diary = ({ selectedDate }) => {
@@ -140,20 +142,47 @@ const Diary = ({ selectedDate }) => {
       setCurrentStep(1);
     }
   };
+  const handleBookmarkClick = async (record) => {
+    try {
+      const newLikedState = !record.liked;
+
+      await axiosInstance.patch(
+        `/mindary/${record.id}?date=${formattedDate}&mode=record`,
+        {
+          liked: newLikedState,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+
+      // Update local state for bookmark status
+      setRecords((prevRecords) =>
+        prevRecords.map((r) =>
+          r.id === record.id ? { ...r, liked: newLikedState } : r
+        )
+      );
+    } catch (error) {
+      console.error("Failed to update liked state:", error);
+      alert("북마크 상태 업데이트 실패");
+    }
+  };
   const handleSave = async () => {
     if (selectedRecord) {
       try {
         await axiosInstance.patch(
           `/mindary/${selectedRecord.id}?date=${formattedDate}&mode=record`,
           {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            },
-          },
-          {
             title: formData.title,
             content: formData.content,
             liked: formData.liked,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
           }
         );
         alert("수정되었습니다.");
@@ -166,15 +195,15 @@ const Diary = ({ selectedDate }) => {
         await axiosInstance.post(
           `/mindary?date=${formattedDate}&mode=record`,
           {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            },
-          },
-          {
             title: formData.title,
             category: selectedCategory,
             content: formData.content,
             liked: formData.liked,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
           }
         );
         alert("저장되었습니다.");
@@ -265,11 +294,19 @@ const Diary = ({ selectedDate }) => {
                     key={record.id}
                     onClick={() => handleRecordSelect(record)}
                     isSelected={isSelectedRecord(record)}
+                    onBookmarkClick={() => handleBookmarkClick(record)}
                   >
                     <Category>{record.category}</Category>
                     <RecordTitle>{truncateText(record.title, 13)}</RecordTitle>
                     <RecordContent>
                       {truncateText(record.content, 89)}
+                      <BookmarkIcon
+                        src={record.liked ? BookmarkFilled : BookmarkEmpty}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleBookmarkClick(record);
+                        }}
+                      />
                     </RecordContent>
                   </Record>
                 ))
@@ -370,8 +407,7 @@ const Content = styled.div`
   width: 100%;
   max-height: ${(props) =>
     props.isEditing && props.currentStep === 1 ? "420px" : "360px"};
-  overflow-y: ${(props) =>
-    props.isEditing && props.currentStep === 1 ? "hidden" : "auto"};
+  overflow-y: ${(props) => (props.currentStep === 1 ? "hidden" : "auto")};
   box-sizing: border-box;
 `;
 
@@ -424,21 +460,29 @@ const RecordTitle = styled(SubTitle2)`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0; /* 축소되지 않도록 설정 */
   height: 89px;
   background-color: white;
-  width: 77px;
+  width: 73px;
   text-align: center;
   font-weight: 400;
 `;
 
 const RecordContent = styled(SubTitle3)`
+  display: flex;
+  width: 80%;
+  padding-left: 5px;
+  padding-right: 5px;
+  align-items: center;
+  position: relative;
   background-color: white;
   font-weight: 400;
   text-align: center;
 `;
 
 const Category = styled(SubTitle1)`
-  width: 45px;
+  flex-shrink: 0; /* 축소되지 않도록 설정 */
+  width: 43px;
   background-color: ${({ theme }) => theme.background};
 `;
 
@@ -535,4 +579,13 @@ const PreviousBtn = styled.button`
 const NextBtn = styled(PreviousBtn)``;
 const DeleteBtn = styled(WriteBtn)`
   margin-right: 70px;
+`;
+
+const BookmarkIcon = styled.img`
+  width: 12px;
+  height: auto;
+  cursor: pointer;
+  top: 8px;
+  right: 8px;
+  position: absolute;
 `;

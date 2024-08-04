@@ -69,12 +69,12 @@ const Memo = ({ selectedDate }) => {
         await axiosInstance.post(
           `/mindary?date=${formattedDate}&mode=chat`,
           {
+            content: inputValue,
+          },
+          {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             },
-          },
-          {
-            content: inputValue,
           }
         );
         setMessages((prevMessages) => [
@@ -172,7 +172,6 @@ const Input = styled.textarea`
   width: 100%;
   padding: 15px;
   height: 91px;
-  margin-bottom: 9px;
   outline: none;
   overflow-y: auto;
   border: none;
