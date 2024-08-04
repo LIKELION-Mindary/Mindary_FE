@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const WeekResult = () => {
+const WeekResult = ({ selectedDate }) => {
   return (
     <Container>
       <Title>이번주 마음 결산</Title>

@@ -61,8 +61,8 @@ const Record = () => {
             <CalendarBox>
               <ReactCalendar onDateChange={handleDateChange} />
               <Result>
-                <WeekResult />
-                <MonthResult />
+                <WeekResult selectedDate={selectedDate} />
+                <MonthResult selectedDate={selectedDate} />
               </Result>
             </CalendarBox>
             <Diary selectedDate={selectedDate} />

@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-const MonthResult = ({}) => {
+const MonthResult = ({ selectedDate }) => {
   const getMonthName = (date) => {
     return `${date.getMonth() + 1}월`;
   };
