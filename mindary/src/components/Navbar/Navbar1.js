@@ -74,6 +74,7 @@ const Bar = styled.div`
   position: fixed;
   top: 52px; /* Navbar가 상단에 고정되도록 설정 */
   left: 0;
+  font-family: "PreVariable";
   font-size: 14px;
   font-weight: 400;
   width: 100%;
@@ -85,6 +86,7 @@ const Bar = styled.div`
 const Section = styled.div`
   display: flex;
   align-items: center;
+  font-family: "PreVariable";
   justify-content: center;
   font-size: 14px;
   font-weight: 400;
@@ -136,6 +138,7 @@ const RecordSection = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 14px;
+  font-family: "PreVariable";
   height: 100%;
   cursor: pointer;
 `;
