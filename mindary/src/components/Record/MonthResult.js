@@ -1,7 +1,29 @@
 import React from "react";
+import { axiosInstance } from "../../api/api";
 import styled from "styled-components";
+import { useState } from "react";
+import moment from "moment";
 
 const MonthResult = ({ selectedDate }) => {
+  const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
+  const [image_url, setImage_URL] = useState();
+  const getMonthResult = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/mindary/records/get-wordcloud?date=${formattedDate}&wordcloud=month`,
+        { image_url: image_url },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+      setImage_URL(response.data);
+    } catch (error) {
+      console.error("Error fetching URL: ", error);
+    }
+  };
+
   const getMonthName = (date) => {
     return `${date.getMonth() + 1}월`;
   };
@@ -30,7 +52,9 @@ const MonthResult = ({ selectedDate }) => {
     <Month>
       <Container>
         <Title>{`${reportMonth}의 월말 결산 (매월 마지막주 업데이트)`}</Title>
-        <PdfBlock>{`${reportMonth} 월말 결산.pdf`}</PdfBlock>
+        <PdfBlock
+          onClick={getMonthResult}
+        >{`${reportMonth} 월말 결산.pdf`}</PdfBlock>
       </Container>
       <Detail>지난 결산들은 Archive 탭에서 확인 가능합니다.</Detail>
     </Month>
@@ -60,6 +84,7 @@ const PdfBlock = styled.div`
   display: flex;
   padding-left: 10px;
   align-items: center;
+  cursor: pointer;
   text-decoration: underline;
   height: 29px;
 `;

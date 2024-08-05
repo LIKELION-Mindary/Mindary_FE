@@ -13,7 +13,7 @@ import { axiosInstance } from "../api/api";
 import { useEffect } from "react";
 import DetailModal from "../components/Archieve/DetailModal";
 
-const Archieve = () => {
+const Archive = () => {
   const { theme, toggleTheme } = useTheme();
 
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ const Archieve = () => {
     : new Date(); // Fallback to current date if no date in URL
 
   const [selectedDate, setSelectedDate] = useState(initialDate);
-
+  const [subtitle, setSubtitle] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10); // Items per page for category results
   const [keywordResults, setKeywordResults] = useState([]);
@@ -116,7 +116,22 @@ const Archieve = () => {
       console.error("Error fetching keyword results:", error);
     }
   };
-
+  const getMonthlySummaryImage = async (yearMonth) => {
+    try {
+      const response = await axiosInstance.get(
+        `/mindary/records/archive/get-wordcloud?date=${yearMonth}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+      return response.data.image_url;
+    } catch (error) {
+      console.error("Error fetching monthly summary image:", error);
+      return null;
+    }
+  };
   useEffect(() => {
     const GetCategoryResults = async () => {
       if (selectedCategory) {
@@ -138,6 +153,56 @@ const Archieve = () => {
     };
     GetCategoryResults();
   }, [selectedCategory]);
+
+  useEffect(() => {
+    handleSearchMonthlySummary();
+  }, [selectedDate]);
+
+  const [summaryImageUrl, setSummaryImageUrl] = useState(null);
+
+  const handleSearchMonthlySummary = async () => {
+    const year = selectedDate.getFullYear();
+    const month = ("0" + (selectedDate.getMonth() + 1)).slice(-2); // 두 자리 형식으로 만들기
+    const yearMonth = `${year}${month}`;
+    const imageUrl = await getMonthlySummaryImage(yearMonth);
+    setSummaryImageUrl(imageUrl);
+  };
+
+  const handleDateChange = (event) => {
+    const { name, value } = event.target;
+    setSelectedDate((prevDate) => {
+      const newDate = new Date(prevDate);
+      if (name === "year") {
+        newDate.setFullYear(value);
+      } else if (name === "month") {
+        newDate.setMonth(value - 1);
+      }
+      return newDate;
+    });
+  };
+  useEffect(() => {
+    if (urlDate) {
+      const date = moment.tz(urlDate, "Asia/Seoul").toDate();
+      setSelectedDate(date);
+      setSubtitle(`${date.getMonth() + 1}월의 월말결산`);
+      handleSearchMonthlySummary(date);
+    }
+  }, [urlDate]);
+
+  useEffect(() => {
+    const date = new Date();
+    date.setMonth(date.getMonth() - 1); // 지난 달
+    setSelectedDate(date);
+    handleSearchMonthlySummary(date);
+    setSubtitle(`$${date.getMonth() + 1}월의 월말결산`);
+  }, []);
+
+  useEffect(() => {
+    if (selectedDate) {
+      setSubtitle(`${selectedDate.getMonth() + 1}월의 월말결산`);
+      handleSearchMonthlySummary(selectedDate);
+    }
+  }, [selectedDate]);
 
   useEffect(() => {
     const categoryFromUrl = queryParams.get("category");
@@ -204,9 +269,19 @@ const Archieve = () => {
             <KeywordSearching>
               <Title>결산 검색</Title>
               <SearchBar>
-                <YearInput placeholder="2024" />
+                <YearInput
+                  name="year"
+                  placeholder="2024"
+                  value={selectedDate.getFullYear()}
+                  onChange={handleDateChange}
+                />
                 <InputInfo>년</InputInfo>
-                <MonthInput placeholder="8" />
+                <MonthInput
+                  name="month"
+                  placeholder="8"
+                  value={selectedDate.getMonth() + 1}
+                  onChange={handleDateChange}
+                />
                 <InputInfo style={{ borderRight: "none" }}>월</InputInfo>
               </SearchBar>
             </KeywordSearching>
@@ -218,9 +293,13 @@ const Archieve = () => {
                     backgroundColor: theme.background,
                   }}
                 >
-                  7월의 월말결산
+                  {subtitle}
                 </SubTitle>
-                <ResultContent>제목</ResultContent>
+                <ResultContent>
+                  <SummaryImage src={summaryImageUrl}>
+                    월말 결산.pdf
+                  </SummaryImage>
+                </ResultContent>
               </ResultContainer>
             </KeywordResult>
           </DateSection>
@@ -283,7 +362,7 @@ const Archieve = () => {
   );
 };
 
-export default Archieve;
+export default Archive;
 
 const Mainpage = styled.div``;
 
@@ -520,4 +599,13 @@ const CategoryContainer = styled.div`
   display: flex;
   flex-direction: row;
   background-color: white;
+`;
+
+const SummaryImage = styled.div`
+  width: 100%;
+  height: auto;
+  text-decoration: underline;
+  display: block;
+  cursor: pointer;
+  margin: auto;
 `;
