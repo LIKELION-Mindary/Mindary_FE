@@ -58,7 +58,7 @@ const Home = () => {
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/mindary/accounts/original/login",
+        "http://43.201.89.165/mindary/accounts/original/login",
         {
           method: "POST",
           headers: {
