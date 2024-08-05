@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled, {
   ThemeProvider as StyledThemeProvider,
 } from "styled-components";
@@ -11,9 +11,22 @@ import BlackImage from "../assets/images/BlackLanding.svg";
 import { useNavigate } from "react-router-dom";
 
 const Landing = () => {
-  const { theme, toggleTheme } = useTheme(); // Use useTheme hook to get theme and toggleTheme
-  const navigate = useNavigate(); // Initialize useNavigate hook
-  const isLoggedIn = localStorage.getItem("isLoggedIn");
+  const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem("isLoggedIn") === "true"
+  );
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true");
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   const handleImageClick = () => {
     const formattedDate = new Date().toISOString().split("T")[0];
@@ -26,7 +39,6 @@ const Landing = () => {
 
   return (
     <StyledThemeProvider theme={theme}>
-      {/* Pass the correct theme object here */}
       <HeaderBase>
         <Header />
       </HeaderBase>
@@ -58,13 +70,13 @@ const ImageContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Adjust this to your needs */
-  cursor: pointer; /* Change cursor to pointer to indicate clickability */
+  height: 100vh;
+  cursor: pointer;
 `;
 
 const Image = styled.img`
   max-width: 100%;
   z-index: 1000;
   max-height: 100%;
-  object-fit: cover; /* Ensures the image covers the container without distortion */
+  object-fit: cover;
 `;
