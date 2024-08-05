@@ -220,7 +220,7 @@ const GeneralSignUp = () => {
             <tbody>
               <tr>
                 <Cell
-                  width="498px"
+                  width="490px"
                   height="30px"
                   colSpan="3"
                   textAlign="left"
@@ -231,7 +231,7 @@ const GeneralSignUp = () => {
                   &nbsp;회원가입
                 </Cell>
                 <Cell
-                  width="395px"
+                  width="340px"
                   borderTop="none"
                   borderRight="none"
                   borderBottom="none"
@@ -252,7 +252,7 @@ const GeneralSignUp = () => {
                   감정을 기록하고 마음을 정리해요.
                 </Cell>
                 <Cell
-                  width="395px"
+                  width="340px"
                   borderTop="none"
                   borderRight="none"
                   borderBottom="none"
@@ -283,7 +283,7 @@ const GeneralSignUp = () => {
                   </Button>
                 </Cell>
                 <Cell
-                  width="395px"
+                  width="340px"
                   borderTop="none"
                   borderRight="none"
                   borderBottom="none"
@@ -325,7 +325,7 @@ const GeneralSignUp = () => {
                   </Button>
                 </Cell>
                 <Cell
-                  width="395px"
+                  width="340px"
                   borderTop="none"
                   borderRight="none"
                   borderBottom="none"
@@ -351,7 +351,7 @@ const GeneralSignUp = () => {
                   />
                 </Cell>
                 <Cell
-                  width="395px"
+                  width="340px"
                   borderTop="none"
                   borderRight="none"
                   borderBottom="none"
@@ -378,7 +378,7 @@ const GeneralSignUp = () => {
                   />
                 </Cell>
                 <Cell
-                  width="395px"
+                  width="340px"
                   borderTop="none"
                   borderRight="none"
                   borderBottom="none"
@@ -404,7 +404,7 @@ const GeneralSignUp = () => {
                   />
                 </Cell>
                 <Cell
-                  width="395px"
+                  width="340px"
                   borderTop="none"
                   borderRight="none"
                   borderBottom="none"
@@ -430,7 +430,7 @@ const GeneralSignUp = () => {
                   </ButtonWrapper>
                 </Cell>
                 <Cell
-                  width="395px"
+                  width="340px"
                   borderTop="none"
                   borderRight="none"
                   borderBottom="none"
