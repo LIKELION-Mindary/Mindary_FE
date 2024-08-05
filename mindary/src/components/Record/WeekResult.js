@@ -2,22 +2,29 @@ import styled from "styled-components";
 import { axiosInstance } from "../../api/api";
 import { useState } from "react";
 import moment from "moment";
+import { downloadFile } from "./DownloadFile";
 
 const WeekResult = ({ selectedDate }) => {
   const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
-  const [image_url, setImage_URL] = useState();
+  const [image_url, setImage_URL] = useState(null);
+  const [fileName, setFileName] = useState("");
+  const generatedFileName = `${moment().format("YYMMDD")}.png`;
+
   const getWeekResult = async () => {
     try {
       const response = await axiosInstance.get(
         `/mindary/records/get-wordcloud?date=${formattedDate}&wordcloud=week`,
-        { image_url: image_url },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
         }
       );
-      setImage_URL(response.data);
+      setImage_URL(response.data.image_url);
+      if (response.data.image_url) {
+        setFileName(generatedFileName);
+        downloadFile(response.data.image_url, generatedFileName);
+      }
     } catch (error) {
       console.error("Error fetching URL: ", error);
     }
@@ -26,10 +33,11 @@ const WeekResult = ({ selectedDate }) => {
   return (
     <Container>
       <Title>이번주 마음 결산</Title>
-      <PdfBlock onClick={getWeekResult}>240721.pdf</PdfBlock>
+      <PdfBlock onClick={getWeekResult}>주간 결산.pdf</PdfBlock>
     </Container>
   );
 };
+
 export default WeekResult;
 
 const Container = styled.div`
@@ -38,7 +46,7 @@ const Container = styled.div`
   justify-content: center;
   width: 342px;
   border: 1px solid black;
-  font-family: 'PreVariable';
+  font-family: "PreVariable";
 `;
 
 const Title = styled.span`
@@ -51,7 +59,7 @@ const Title = styled.span`
   background-color: #f4f4f4;
 `;
 
-const PdfBlock = styled.a`
+const PdfBlock = styled.div`
   display: flex;
   padding-left: 10px;
   cursor: pointer;

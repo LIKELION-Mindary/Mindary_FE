@@ -89,7 +89,6 @@ const Container = styled.div`
 const CalendarBox = styled.div`
   display: flex;
   flex-direction: column;
-  margin-right: 105px;
   width: 425px;
   height: 501px;
 `;

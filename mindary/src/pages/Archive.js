@@ -12,14 +12,14 @@ import SelectInput from "../components/Archieve/SelectInput";
 import { axiosInstance } from "../api/api";
 import { useEffect } from "react";
 import DetailModal from "../components/Archieve/DetailModal";
+import { downloadFile } from "../components/Record/DownloadFile";
 
 const Archive = () => {
   const { theme, toggleTheme } = useTheme();
-
+  const [image_url, setImage_URL] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-
   const urlDate = queryParams.get("date");
   const initialDate = urlDate
     ? moment.tz(urlDate, "Asia/Seoul").toDate()
@@ -120,13 +120,17 @@ const Archive = () => {
     try {
       const response = await axiosInstance.get(
         `/mindary/records/archive/get-wordcloud?date=${yearMonth}`,
+        { image_url: image_url },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
         }
       );
-      return response.data.image_url;
+      setImage_URL(response.data.image_url);
+      if (response.data.image_url) {
+        downloadFile(response.data.image_url, "월말 결산.pdf");
+      }
     } catch (error) {
       console.error("Error fetching monthly summary image:", error);
       return null;
@@ -379,7 +383,7 @@ const Container = styled.div`
   position: fixed;
   display: flex;
   justify-content: center;
-  font-family: 'PreVariable';
+  font-family: "PreVariable";
 `;
 const KeywordSection = styled.div`
   width: 344px;
