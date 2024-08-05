@@ -1,12 +1,15 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function LogoutBtn() {
+  const navigate = useNavigate();
+
   // 로그아웃 함수
   const handleLogout = async () => {
     try {
       // 백엔드로 로그아웃 요청 보내기
       const response = await fetch(
-        "http://127.0.0.1:8000/mindary/accounts/original/logout",
+        "http://43.201.89.165/mindary/accounts/original/logout",
         {
           method: "POST",
           headers: {
@@ -17,9 +20,6 @@ function LogoutBtn() {
           body: JSON.stringify({
             refresh_token: localStorage.getItem("refresh_token"),
           }),
-          // body: JSON.stringify( localStorage.getItem("refresh_token") ), 이런 식으로 하면 안 되게 백엔드가 코드를
-          // 짜나보다.
-          // Also, JSON.stringify도 꼭 해줘야 한다.
         }
       );
 
@@ -27,13 +27,11 @@ function LogoutBtn() {
         // 로그아웃 성공 처리
         alert("로그아웃 성공");
 
-        // 로컬 스토리지에서 토큰 제거
+        // 로컬 스토리지에서 토큰 및 isLoggedIn 값 제거
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
-
-        // 로그아웃 후 추가적인 처리 로직
-        // 예를 들어, 로그인 페이지로 리다이렉트
-        // window.location.href = '/login';
+        localStorage.setItem("isLoggedIn", "false");
+        navigate("/");
       } else {
         // 로그아웃 실패 시 처리
         alert("로그아웃 실패. 다시 시도해주세요.");

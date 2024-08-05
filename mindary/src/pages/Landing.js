@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 const Landing = () => {
   const { theme, toggleTheme } = useTheme(); // Use useTheme hook to get theme and toggleTheme
   const navigate = useNavigate(); // Initialize useNavigate hook
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  const isLoggedIn = localStorage.getItem("isLoggedIn");
 
   const handleImageClick = () => {
     const formattedDate = new Date().toISOString().split("T")[0];

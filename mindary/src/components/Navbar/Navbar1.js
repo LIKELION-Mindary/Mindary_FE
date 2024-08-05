@@ -17,7 +17,7 @@ const Navbar1 = ({ selectedDate }) => {
     try {
       // 백엔드로 로그아웃 요청 보내기
       const response = await fetch(
-        "http://127.0.0.1:8000/mindary/accounts/kakao/logout",
+        "http://43.201.89.165/mindary/accounts/original/logout",
         {
           method: "POST",
           headers: {
@@ -33,6 +33,8 @@ const Navbar1 = ({ selectedDate }) => {
       if (response.ok) {
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
+        setIsLoggedIn(false);
+        localStorage.setItem("isLoggedIn", "false");
         navigate("/");
       } else {
         alert("로그아웃 실패. 다시 시도해주세요.");
@@ -81,7 +83,7 @@ const Bar = styled.div`
   height: 29px; /* Navbar 높이 */
   color: black;
   z-index: 1000; /* 다른 요소 위에 위치하도록 설정 */
-  font-family: 'PreVariable';
+  font-family: "PreVariable";
 `;
 
 const Section = styled.div`

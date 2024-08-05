@@ -101,7 +101,7 @@ const GeneralSignUp = () => {
   const onValidEmail = useCallback(
     (e) => {
       e.preventDefault();
-      fetch("http://127.0.0.1:8000/mindary/accounts/original/send-code", {
+      fetch("http://43.201.89.165/mindary/accounts/original/send-code", {
         method: "POST",
         headers: { "Content-Type": "application/json;charset=utf-8" },
         body: JSON.stringify({
@@ -125,7 +125,7 @@ const GeneralSignUp = () => {
 
   const onValidVeriCode = (e) => {
     e.preventDefault();
-    fetch("http://127.0.0.1:8000/mindary/accounts/original/verify-code", {
+    fetch("http://43.201.89.165/mindary/accounts/original/verify-code", {
       method: "POST",
       headers: { "Content-Type": "application/json;charset=utf-8" },
       body: JSON.stringify({
@@ -182,7 +182,7 @@ const GeneralSignUp = () => {
       return;
     }
 
-    fetch("http://127.0.0.1:8000/mindary/accounts/original/register", {
+    fetch("http://43.201.89.165/mindary/accounts/original/register", {
       method: "POST",
       headers: { "Content-Type": "application/json;charset=utf-8" },
       body: JSON.stringify({

@@ -10,9 +10,6 @@ const NoLogoutNavbar = ({ selectedDate }) => {
   const { theme, toggleTheme } = useTheme();
   const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    localStorage.getItem("isLoggedIn") === "true"
-  );
 
   return (
     <Bar>
@@ -50,7 +47,7 @@ const Bar = styled.div`
   height: 29px; /* Navbar 높이 */
   color: black;
   z-index: 1000; /* 다른 요소 위에 위치하도록 설정 */
-  font-family: 'PreVariable'; /* Apply "Pretendard Variable" to all letters in the header */
+  font-family: "PreVariable"; /* Apply "Pretendard Variable" to all letters in the header */
 `;
 
 const Section = styled.div`
