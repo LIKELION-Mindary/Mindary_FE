@@ -587,6 +587,7 @@ const BookmarkIcon = styled.img`
   width: 12px;
   height: auto;
   cursor: pointer;
+  padding: 5px;
   top: 8px;
   right: 8px;
   position: absolute;

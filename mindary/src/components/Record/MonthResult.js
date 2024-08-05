@@ -6,13 +6,13 @@ import { downloadFile } from "./DownloadFile";
 
 const MonthResult = ({ selectedDate }) => {
   const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
-  const [image_url, setImage_URL] = useState(null);
+  const [image_url, setImage_URL] = useState();
+  const fullImageUrl = `http://localhost:8000${image_url}`;
 
   const getMonthResult = async () => {
     try {
       const response = await axiosInstance.get(
-        `/mindary/records/get-wordcloud?date=${formattedDate}&wordcloud=month`,
-        { image_url: image_url },
+        `/mindary/records/wordcloud/get-wordcloud?date=${formattedDate}&wordcloud=month`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -21,42 +21,18 @@ const MonthResult = ({ selectedDate }) => {
       );
       setImage_URL(response.data.image_url);
       if (response.data.image_url) {
-        downloadFile(response.data.image_url, "월말 결산.pdf");
+        downloadFile(fullImageUrl, "월말 결산.png");
       }
     } catch (error) {
       console.error("Error fetching URL: ", error);
     }
   };
 
-  const getMonthName = (date) => {
-    return `${date.getMonth() + 1}월`;
-  };
-
-  const getPreviousMonthName = (date) => {
-    const previousMonthDate = new Date(
-      date.getFullYear(),
-      date.getMonth() - 1,
-      1
-    );
-    return `${previousMonthDate.getMonth() + 1}월`;
-  };
-
-  const isLastWeekOfMonth = (date) => {
-    const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-    const lastWeekStart = new Date(lastDayOfMonth);
-    lastWeekStart.setDate(lastWeekStart.getDate() - 6);
-    return date >= lastWeekStart;
-  };
-  const today = new Date();
-  const currentMonth = getMonthName(today);
-  const previousMonth = getPreviousMonthName(today);
-  const reportMonth = isLastWeekOfMonth(today) ? currentMonth : previousMonth;
-
   return (
     <Month>
       <Container>
-        <Title>{`${reportMonth}의 월말 결산 (매월 마지막주 업데이트)`}</Title>
-        <PdfBlock onClick={getMonthResult}>월말 결산.pdf</PdfBlock>
+        <Title>{`${selectedDate.getMonth() + 1}월의 월말 결산 (매월 마지막주 업데이트)`}</Title>
+        <PdfBlock onClick={getMonthResult}>월말 결산.png</PdfBlock>
       </Container>
       <Detail>지난 결산들은 Archive 탭에서 확인 가능합니다.</Detail>
     </Month>

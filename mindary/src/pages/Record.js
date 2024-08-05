@@ -33,7 +33,6 @@ const Record = () => {
       .tz("Asia/Seoul")
       .format("YYYY-MM-DD");
 
-    // Only navigate if the formattedDate is not the same as in the URL
     const currentUrlDate = queryParams.get("date");
     if (formattedDate !== currentUrlDate) {
       navigate(`/mindary?date=${formattedDate}&mode=chat`);
@@ -106,7 +105,7 @@ const Content = styled.div`
   align-content: center;
   justify-content: center;
   left: 287px;
-  top: 207px;
+  top: 222px;
   position: fixed;
 `;
 

@@ -16,7 +16,7 @@ import { downloadFile } from "../components/Record/DownloadFile";
 
 const Archive = () => {
   const { theme, toggleTheme } = useTheme();
-  const [image_url, setImage_URL] = useState(null);
+  const [imageurl, setImageURL] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -25,7 +25,11 @@ const Archive = () => {
     ? moment.tz(urlDate, "Asia/Seoul").toDate()
     : new Date(); // Fallback to current date if no date in URL
 
-  const [selectedDate, setSelectedDate] = useState(initialDate);
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const date = new Date();
+    date.setMonth(date.getMonth() - 1); // Last month
+    return date;
+  });
   const [subtitle, setSubtitle] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10); // Items per page for category results
@@ -86,21 +90,21 @@ const Archive = () => {
     setSelectedItemId(null);
   };
 
+  // 키워드 검색
+
+  const handleSearchInputChange = (event) => {
+    setSearchKeyword(event.target.value);
+  };
+
   const handleKeywordPageChange = (event) => {
     const pageNumber = Number(event.target.value);
     if (pageNumber > 0 && pageNumber <= totalKeywordPages) {
       setCurrentKeywordPage(pageNumber);
     }
   };
-  const handleCategoryChange = (selectedValue) => {
-    console.log("Selected Category:", selectedValue);
-    setSelectedCategory(selectedValue);
-  };
-  const handleSearchInputChange = (event) => {
-    setSearchKeyword(event.target.value);
-  };
 
-  const handleKeywordSearch = async () => {
+  const handleKeywordSearch = async (event) => {
+    if (event) event.preventDefault(); // 폼 제출 방지
     try {
       const response = await axiosInstance.get(
         `mindary/records/archive?keyword=${searchKeyword}&order_by=desc`,
@@ -116,26 +120,18 @@ const Archive = () => {
       console.error("Error fetching keyword results:", error);
     }
   };
-  const getMonthlySummaryImage = async (yearMonth) => {
-    try {
-      const response = await axiosInstance.get(
-        `/mindary/records/archive/get-wordcloud?date=${yearMonth}`,
-        { image_url: image_url },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
-      setImage_URL(response.data.image_url);
-      if (response.data.image_url) {
-        downloadFile(response.data.image_url, "월말 결산.pdf");
-      }
-    } catch (error) {
-      console.error("Error fetching monthly summary image:", error);
-      return null;
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      handleKeywordSearch();
     }
   };
+
+  // 카테고리 검색
+  const handleCategoryChange = (selectedValue) => {
+    console.log("Selected Category:", selectedValue);
+    setSelectedCategory(selectedValue);
+  };
+
   useEffect(() => {
     const GetCategoryResults = async () => {
       if (selectedCategory) {
@@ -159,61 +155,70 @@ const Archive = () => {
   }, [selectedCategory]);
 
   useEffect(() => {
-    handleSearchMonthlySummary();
-  }, [selectedDate]);
-
-  const [summaryImageUrl, setSummaryImageUrl] = useState(null);
-
-  const handleSearchMonthlySummary = async () => {
-    const year = selectedDate.getFullYear();
-    const month = ("0" + (selectedDate.getMonth() + 1)).slice(-2); // 두 자리 형식으로 만들기
-    const yearMonth = `${year}${month}`;
-    const imageUrl = await getMonthlySummaryImage(yearMonth);
-    setSummaryImageUrl(imageUrl);
-  };
-
-  const handleDateChange = (event) => {
-    const { name, value } = event.target;
-    setSelectedDate((prevDate) => {
-      const newDate = new Date(prevDate);
-      if (name === "year") {
-        newDate.setFullYear(value);
-      } else if (name === "month") {
-        newDate.setMonth(value - 1);
-      }
-      return newDate;
-    });
-  };
-  useEffect(() => {
-    if (urlDate) {
-      const date = moment.tz(urlDate, "Asia/Seoul").toDate();
-      setSelectedDate(date);
-      setSubtitle(`${date.getMonth() + 1}월의 월말결산`);
-      handleSearchMonthlySummary(date);
-    }
-  }, [urlDate]);
-
-  useEffect(() => {
-    const date = new Date();
-    date.setMonth(date.getMonth() - 1); // 지난 달
-    setSelectedDate(date);
-    handleSearchMonthlySummary(date);
-    setSubtitle(`$${date.getMonth() + 1}월의 월말결산`);
-  }, []);
-
-  useEffect(() => {
-    if (selectedDate) {
-      setSubtitle(`${selectedDate.getMonth() + 1}월의 월말결산`);
-      handleSearchMonthlySummary(selectedDate);
-    }
-  }, [selectedDate]);
-
-  useEffect(() => {
     const categoryFromUrl = queryParams.get("category");
     if (categoryFromUrl) {
       setSelectedCategory(categoryFromUrl);
     }
   }, [location.search]);
+
+  //날짜 입력 검색
+  // 버튼 클릭 시 선택한 날짜 받아오고 넘겨줌
+
+  const [summaryImageUrl, setSummaryImageUrl] = useState();
+  const yearMonth = `${selectedDate.getFullYear()}${("0" + (selectedDate.getMonth() + 1)).slice(-2)}`;
+
+  const fullImageUrl = `http://localhost:8000${imageurl}`;
+
+  const getMonthlySummaryImage = async (yearMonth) => {
+    try {
+      const response = await axiosInstance.get(
+        `/mindary/records/archive/get-wordcloud?date=${yearMonth}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+      setImageURL(response.data.image_url);
+    } catch (error) {
+      console.error("Error fetching monthly summary image:", error);
+    }
+  };
+
+  useEffect(() => {
+    // 월말결산 이미지 가져오기
+    const fetchSummaryImage = async () => {
+      await getMonthlySummaryImage(yearMonth);
+    };
+    fetchSummaryImage();
+
+    setSubtitle(`${selectedDate.getMonth() + 1}월의 월말결산`);
+  }, [selectedDate]);
+
+  const handleDateChange = (event) => {
+    const { name, value } = event.target;
+    const numericValue = parseInt(value, 10);
+
+    setSelectedDate((prevDate) => {
+      const newDate = new Date(prevDate);
+
+      if (name === "year") {
+        if (!isNaN(numericValue) && numericValue > 0) {
+          newDate.setFullYear(numericValue);
+        }
+      } else if (name === "month") {
+        if (!isNaN(numericValue) && numericValue >= 1 && numericValue <= 12) {
+          newDate.setMonth(numericValue - 1);
+        }
+      }
+      return newDate;
+    });
+  };
+  const handleDownloadButtonClick = () => {
+    if (imageurl) {
+      downloadFile(fullImageUrl, "월말 결산.png");
+    }
+  };
 
   return (
     <StyledThemeProvider theme={theme}>
@@ -236,6 +241,7 @@ const Archive = () => {
                   placeholder="키워드로 검색하세요."
                   value={searchKeyword} // 입력 값을 상태와 연결
                   onChange={handleSearchInputChange}
+                  onKeyDown={handleKeyPress}
                 />
                 <SearchBtn onClick={handleKeywordSearch}>검색</SearchBtn>
               </SearchBar>
@@ -274,16 +280,18 @@ const Archive = () => {
               <Title>결산 검색</Title>
               <SearchBar>
                 <YearInput
+                  type="number"
                   name="year"
+                  value={selectedDate.getFullYear() || ""}
                   placeholder="2024"
-                  value={selectedDate.getFullYear()}
                   onChange={handleDateChange}
                 />
                 <InputInfo>년</InputInfo>
                 <MonthInput
+                  type="number"
                   name="month"
+                  value={selectedDate.getMonth() + 1 || ""}
                   placeholder="8"
-                  value={selectedDate.getMonth() + 1}
                   onChange={handleDateChange}
                 />
                 <InputInfo style={{ borderRight: "none" }}>월</InputInfo>
@@ -300,7 +308,10 @@ const Archive = () => {
                   {subtitle}
                 </SubTitle>
                 <ResultContent>
-                  <SummaryImage src={summaryImageUrl}>
+                  <SummaryImage
+                    onClick={handleDownloadButtonClick}
+                    src={summaryImageUrl}
+                  >
                     월말 결산.pdf
                   </SummaryImage>
                 </ResultContent>

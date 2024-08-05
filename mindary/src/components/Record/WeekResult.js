@@ -6,14 +6,13 @@ import { downloadFile } from "./DownloadFile";
 
 const WeekResult = ({ selectedDate }) => {
   const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
-  const [image_url, setImage_URL] = useState(null);
-  const [fileName, setFileName] = useState("");
-  const generatedFileName = `${moment().format("YYMMDD")}.png`;
+  const [image_url, setImage_URL] = useState();
+  const fullImageUrl = `http://localhost:8000${image_url}`;
 
   const getWeekResult = async () => {
     try {
       const response = await axiosInstance.get(
-        `/mindary/records/get-wordcloud?date=${formattedDate}&wordcloud=week`,
+        `/mindary/records/wordcloud/get-wordcloud?date=${formattedDate}&wordcloud=week`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -22,8 +21,7 @@ const WeekResult = ({ selectedDate }) => {
       );
       setImage_URL(response.data.image_url);
       if (response.data.image_url) {
-        setFileName(generatedFileName);
-        downloadFile(response.data.image_url, generatedFileName);
+        downloadFile(fullImageUrl, "주간 결산.png");
       }
     } catch (error) {
       console.error("Error fetching URL: ", error);
@@ -33,7 +31,7 @@ const WeekResult = ({ selectedDate }) => {
   return (
     <Container>
       <Title>이번주 마음 결산</Title>
-      <PdfBlock onClick={getWeekResult}>주간 결산.pdf</PdfBlock>
+      <PdfBlock onClick={getWeekResult}>주간 결산.png</PdfBlock>
     </Container>
   );
 };
@@ -47,6 +45,11 @@ const Container = styled.div`
   width: 342px;
   border: 1px solid black;
   font-family: "PreVariable";
+`;
+const Image = styled.img`
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 `;
 
 const Title = styled.span`
