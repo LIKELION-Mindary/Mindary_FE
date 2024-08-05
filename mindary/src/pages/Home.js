@@ -70,7 +70,7 @@ const Home = () => {
 
       if (response.status === 200) {
         const data = await response.json();
-        alert("로그인 성공:", data);
+        alert("로그인 성공");
 
         localStorage.setItem("access_token", data.access_token);
         localStorage.setItem("refresh_token", data.refresh_token);
@@ -84,11 +84,8 @@ const Home = () => {
         setErrorMessage2("※ 이메일 혹은 비밀번호가 일치하지 않습니다.");
       } else if (response.status === 401) {
         setErrorMessage1("※ 존재하지 않는 계정입니다.");
-      } else {
-        setErrorMessage1("로그인 실패. 다시 시도해주세요.");
       }
     } catch (error) {
-      console.error("로그인 중 오류 발생:", error);
       setErrorMessage1("로그인 중 오류가 발생했습니다.");
     }
   };
@@ -101,9 +98,15 @@ const Home = () => {
       <DefaultExcel />
       <Navbar toggleTheme={toggleTheme} />
       <Body>
-        <LoginBody>
+        <LoginBody showSignUp={showSignUp}>
           {showSignUp ? (
-            <GeneralSignUp theme={theme} />
+            <GeneralSignUp
+              theme={theme}
+              onSignupSuccess={() => {
+                setShowSignUp(false);
+                navigate("/login");
+              }}
+            />
           ) : (
             <LoginSection>
               <Title>로그인</Title>
@@ -351,6 +354,6 @@ const ErrorMessage2 = styled(ErrorMessage1)`
 
 const LoginBody = styled.div`
   display: flex;
-  width: 720px;
+  width: ${(props) => (props.showSignUp ? "900px" : "720px")};
   flex-direction: row;
 `;

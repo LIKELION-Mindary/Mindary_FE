@@ -53,6 +53,10 @@ const Button = styled.button`
 const ErrorMessage = styled.div`
   color: red;
   font-size: 16px;
+  height: 29px;
+  display: flex;
+  align-items: center;
+  font-weight: 700;
   text-align: left;
 `;
 
@@ -314,6 +318,32 @@ const GeneralSignUp = ({ theme }) => {
           </tr>
           <tr>
             <Cell width="119px" fontSize="14px" backgroundColor="white">
+              비밀번호
+            </Cell>
+            <Cell colSpan="2" textAlign="left" backgroundColor="white">
+              &nbsp;
+              <Input
+                type="password" //////////////////////////////////
+                value={password}
+                onChange={handlePasswordChange}
+                placeholder="※ 8~12 자리 영소문자, 숫자, 특수문자 조합으로 입력해주세요."
+                disabled={!isVerified}
+              />
+            </Cell>
+            <Cell
+              width="395px"
+              borderTop="none"
+              borderRight="none"
+              borderBottom="none"
+              borderLeft="none"
+            >
+              {errors.password && (
+                <ErrorMessage>&nbsp;{errors.password}</ErrorMessage>
+              )}
+            </Cell>
+          </tr>
+          <tr>
+            <Cell width="119px" fontSize="14px" backgroundColor="white">
               비밀번호 확인
             </Cell>
             <Cell colSpan="2" textAlign="left" backgroundColor="white">
@@ -338,31 +368,6 @@ const GeneralSignUp = ({ theme }) => {
                 <ErrorMessage>{errors.confirmPassword}</ErrorMessage>
               )}
             </Cell>
-          </tr>
-          <tr>
-            <Cell width="119px" fontSize="14px" backgroundColor="white">
-              비밀번호 확인
-            </Cell>
-            <Cell colSpan="2" textAlign="left" backgroundColor="white">
-              &nbsp;
-              <Input
-                type="password"
-                value={confirmPassword}
-                onChange={handleConfirmPasswordChange}
-                placeholder="8~12 자리 영소문자, 숫자, 특수문자 조합"
-                disabled={!isVerified}
-              />
-              {errors.confirmPassword && (
-                <ErrorMessage>{errors.confirmPassword}</ErrorMessage>
-              )}
-            </Cell>
-            <Cell
-              width="395px"
-              borderTop="none"
-              borderRight="none"
-              borderBottom="none"
-              borderLeft="none"
-            />
           </tr>
           <tr>
             <Cell width="119px" fontSize="14px" backgroundColor="white">

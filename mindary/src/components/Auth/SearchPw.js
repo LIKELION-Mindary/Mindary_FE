@@ -26,14 +26,10 @@ const SearchPw = () => {
         }
       );
 
-      if (response.ok) {
-        setSuccessMessage("새 비밀번호가 이메일로 전송되었습니다.");
-      } else if (response.status === 400) {
+      if (response.status === 400) {
         setErrorMessage("잘못된 양식입니다.");
       } else if (response.status === 404) {
-        setErrorMessage("※ 존재하지 않는 계정입니다.");
-      } else {
-        setErrorMessage("서버 오류가 발생했습니다.");
+        setErrorMessage("※ 유효하지 않은 이메일입니다.");
       }
     } catch (error) {
       setErrorMessage("네트워크 오류가 발생했습니다.");
