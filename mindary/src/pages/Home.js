@@ -149,8 +149,10 @@ const Home = () => {
               {showSearchPw && <SearchPw />}
             </LoginSection>
           )}
-          {errorMessage1 && <ErrorMessage1>{errorMessage1}</ErrorMessage1>}
-          {errorMessage2 && <ErrorMessage2>{errorMessage2}</ErrorMessage2>}
+          <Error>
+            {errorMessage1 && <ErrorMessage1>{errorMessage1}</ErrorMessage1>}
+            {errorMessage2 && <ErrorMessage2>{errorMessage2}</ErrorMessage2>}
+          </Error>
         </LoginBody>
       </Body>
     </StyledThemeProvider>
@@ -158,7 +160,10 @@ const Home = () => {
 };
 
 export default Home;
-
+const Error = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 const Body = styled.div`
   width: 100%;
   display: flex;
@@ -343,13 +348,14 @@ const ErrorMessage1 = styled.div`
   font-size: 16px;
   padding-left: 10px;
   font-weight: 700;
+  font-family: "Prevariable";
   height: 29px;
   width: 350px;
   margin-top: 60px;
   text-align: center;
 `;
 const ErrorMessage2 = styled(ErrorMessage1)`
-  margin-top: 90px;
+  margin-top: 0;
 `;
 
 const LoginBody = styled.div`
