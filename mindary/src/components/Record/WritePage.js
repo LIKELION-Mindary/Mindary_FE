@@ -53,7 +53,7 @@ const Title = styled.textarea`
   display: flex;
   padding: 5px;
   padding-top: 15px;
-  width: 63px;
+  width: 74px;
   border: none;
   background-color: white;
   font-size: 13px;
@@ -61,6 +61,7 @@ const Title = styled.textarea`
   outline: none; /* 포커스 시 외곽선 제거 */
   border-right: 1px solid black;
   height: 100%;
+  box-sizing: border-box; /* 패딩과 테두리를 포함한 전체 크기 계산 */
   &::placeholder {
     color: #d0d0d0;
     padding: 5px;
@@ -76,6 +77,8 @@ const Content = styled.textarea`
   background-color: white;
   font-size: 13px;
   height: 100%;
+  box-sizing: border-box; /* 패딩과 테두리를 포함한 전체 크기 계산 */
+  overflow: auto; /* 내용이 길어졌을 때 스크롤 생기도록 */
   &::placeholder {
     color: #d0d0d0;
     font-size: 13px;

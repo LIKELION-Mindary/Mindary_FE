@@ -409,7 +409,7 @@ const Content = styled.div`
   width: 100%;
   max-height: ${(props) =>
     props.isEditing && props.currentStep === 1 ? "420px" : "360px"};
-  overflow-y: ${(props) => (props.currentStep === 1 ? "hidden" : "auto")};
+  overflow-y: ${(props) => (props.isEditing ? "hidden" : "auto")};
   box-sizing: border-box;
 `;
 

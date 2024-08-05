@@ -13,9 +13,9 @@ const Navbar1 = ({ selectedDate }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem("isLoggedIn") === "true"
   );
+
   const handleLogout = async () => {
     try {
-      // 백엔드로 로그아웃 요청 보내기
       const response = await fetch(
         "http://43.201.89.165/mindary/accounts/original/logout",
         {
@@ -45,6 +45,14 @@ const Navbar1 = ({ selectedDate }) => {
     }
   };
 
+  const handleNavigate = (path) => {
+    if (isLoggedIn) {
+      navigate(path);
+    } else {
+      navigate("/login");
+    }
+  };
+
   return (
     <Bar>
       <SectionA>A</SectionA>
@@ -52,15 +60,15 @@ const Navbar1 = ({ selectedDate }) => {
       <SectionC>C</SectionC>
       <SectionD>D</SectionD>
       <SectionE>E</SectionE>
-      <RecordSection>
-        <Link to={`/mindary?date=${formattedDate}`}>
-          <SectionRecord>Record</SectionRecord>
-        </Link>
+      <RecordSection
+        onClick={() => handleNavigate(`/mindary?date=${formattedDate}`)}
+      >
+        <SectionRecord>Record</SectionRecord>
       </RecordSection>
-      <ArchiveSection>
-        <Link to="/mindary/records/archive">
-          <SectionArchive>Archive</SectionArchive>
-        </Link>
+      <ArchiveSection
+        onClick={() => handleNavigate("/mindary/records/archive")}
+      >
+        <SectionArchive>Archive</SectionArchive>
       </ArchiveSection>
       <SectionF>F</SectionF>
       <SectionMode onClick={toggleTheme}>Mode : {theme.modeIcon}</SectionMode>
