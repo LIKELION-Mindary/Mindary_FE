@@ -33,7 +33,6 @@ const Record = () => {
       .tz("Asia/Seoul")
       .format("YYYY-MM-DD");
 
-    // Only navigate if the formattedDate is not the same as in the URL
     const currentUrlDate = queryParams.get("date");
     if (formattedDate !== currentUrlDate) {
       navigate(`/mindary?date=${formattedDate}&mode=chat`);
@@ -61,8 +60,8 @@ const Record = () => {
             <CalendarBox>
               <ReactCalendar onDateChange={handleDateChange} />
               <Result>
-                <WeekResult />
-                <MonthResult />
+                <WeekResult selectedDate={selectedDate} />
+                <MonthResult selectedDate={selectedDate} />
               </Result>
             </CalendarBox>
             <Diary selectedDate={selectedDate} />
@@ -89,7 +88,6 @@ const Container = styled.div`
 const CalendarBox = styled.div`
   display: flex;
   flex-direction: column;
-  margin-right: 105px;
   width: 425px;
   height: 501px;
 `;
@@ -107,7 +105,7 @@ const Content = styled.div`
   align-content: center;
   justify-content: center;
   left: 287px;
-  top: 207px;
+  top: 222px;
   position: fixed;
 `;
 

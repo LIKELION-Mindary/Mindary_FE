@@ -55,11 +55,11 @@ const Navbar1 = ({ selectedDate }) => {
           <SectionRecord>Record</SectionRecord>
         </Link>
       </RecordSection>
-      <ArchieveSection>
-        <Link to="/mindary/records/archieve">
-          <SectionArchieve>Archieve</SectionArchieve>
+      <ArchiveSection>
+        <Link to="/mindary/records/archive">
+          <SectionArchive>Archive</SectionArchive>
         </Link>
-      </ArchieveSection>
+      </ArchiveSection>
       <SectionF>F</SectionF>
       <SectionMode onClick={toggleTheme}>Mode : {theme.modeIcon}</SectionMode>
       <SectionLogout onClick={handleLogout}>Log Out</SectionLogout>
@@ -130,7 +130,7 @@ const SectionRecord = styled(Section)`
   width: 119px;
 `;
 
-const SectionArchieve = styled(Section)`
+const SectionArchive = styled(Section)`
   width: 119px;
 `;
 
@@ -144,7 +144,7 @@ const RecordSection = styled.div`
   cursor: pointer;
 `;
 
-const ArchieveSection = styled(RecordSection)``;
+const ArchiveSection = styled(RecordSection)``;
 
 const SectionNull2 = styled(Section)`
   flex-grow: 1;

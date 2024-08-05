@@ -15,22 +15,21 @@ const SearchPw = () => {
     setSuccessMessage("");
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/mindary/accounts/original/new-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
+      const response = await fetch(
+        "http://43.201.89.165/mindary/accounts/original/new-password",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
 
-      if (response.ok) {
-        setSuccessMessage("새 비밀번호가 이메일로 전송되었습니다.");
-      } else if (response.status === 400) {
+      if (response.status === 400) {
         setErrorMessage("잘못된 양식입니다.");
       } else if (response.status === 404) {
-        setErrorMessage("※ 존재하지 않는 계정입니다.");
-      } else {
-        setErrorMessage("서버 오류가 발생했습니다.");
+        setErrorMessage("※ 유효하지 않은 이메일입니다.");
       }
     } catch (error) {
       setErrorMessage("네트워크 오류가 발생했습니다.");
@@ -39,23 +38,25 @@ const SearchPw = () => {
 
   return (
     <Wrapper>
-      <Title>비밀번호 찾기</Title>
-      <SearchBox>
-        <TitleSection>
-          <SubTitle>항목</SubTitle>
-          <Description>마인더리와 함께하는 마음 기록</Description>
-        </TitleSection>
-        <EmailSection>
-          <Label htmlFor="email">이메일</Label>
-          <EmailInput
-            id="email"
-            placeholder="hongik@hongik.ac.kr"
-            value={email}
-            onChange={handleInputChange}
-          />
-        </EmailSection>
-        <SendEmail onClick={handleSendEmail}> 새 비밀번호 받기 </SendEmail>
-      </SearchBox>
+      <Container>
+        <Title>비밀번호 찾기</Title>
+        <SearchBox>
+          <TitleSection>
+            <SubTitle>항목</SubTitle>
+            <Description>마인더리와 함께하는 마음 기록</Description>
+          </TitleSection>
+          <EmailSection>
+            <Label htmlFor="email">이메일</Label>
+            <EmailInput
+              id="email"
+              placeholder="hongik@hongik.ac.kr"
+              value={email}
+              onChange={handleInputChange}
+            />
+          </EmailSection>
+          <SendEmail onClick={handleSendEmail}> 새 비밀번호 받기 </SendEmail>
+        </SearchBox>
+      </Container>
       {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
       {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
     </Wrapper>
@@ -64,10 +65,14 @@ const SearchPw = () => {
 
 export default SearchPw;
 
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 const Wrapper = styled.div`
   display: flex;
-  width: 376px;
-  flex-direction: column;
+  width: 720px;
+  flex-direction: row;
   margin-top: 90px;
 `;
 
@@ -159,14 +164,13 @@ const SendEmail = styled.button`
 const ErrorMessage = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
   color: #ff0000;
   font-size: 16px;
   font-weight: 700;
   height: 29px;
-  width: 183px;
-  margin-top: 60px;
+  width: 350px;
   padding-left: 10px;
+  margin-top: 60px;
   text-align: center;
 `;
 
@@ -183,4 +187,3 @@ const SuccessMessage = styled.div`
   padding-left: 10px;
   text-align: center;
 `;
-
