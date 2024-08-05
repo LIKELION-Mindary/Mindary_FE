@@ -1,15 +1,24 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../../styles/ThemeContext";
-import { axiosInstance } from "../../api/api";
-import { useNavigate } from "react-router-dom";
 import moment from "moment";
 
 const NoLogoutNavbar = ({ selectedDate }) => {
   const { theme, toggleTheme } = useTheme();
   const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem("isLoggedIn") === "true"
+  );
+
+  const handleNavigate = (path) => {
+    if (isLoggedIn) {
+      navigate(path);
+    } else {
+      navigate("/login");
+    }
+  };
 
   return (
     <Bar>
@@ -18,15 +27,15 @@ const NoLogoutNavbar = ({ selectedDate }) => {
       <SectionC>C</SectionC>
       <SectionD>D</SectionD>
       <SectionE>E</SectionE>
-      <RecordSection>
-        <Link to={`/mindary?date=${formattedDate}`}>
-          <SectionRecord>Record</SectionRecord>
-        </Link>
+      <RecordSection
+        onClick={() => handleNavigate(`/mindary?date=${formattedDate}`)}
+      >
+        <SectionRecord>Record</SectionRecord>
       </RecordSection>
-      <ArchiveSection>
-        <Link to="/mindary/records/archive">
-          <SectionArchive>Archive</SectionArchive>
-        </Link>
+      <ArchiveSection
+        onClick={() => handleNavigate("/mindary/records/archive")}
+      >
+        <SectionArchive>Archive</SectionArchive>
       </ArchiveSection>
       <SectionF>F</SectionF>
       <SectionMode onClick={toggleTheme}>Mode : {theme.modeIcon}</SectionMode>

@@ -114,7 +114,7 @@ const GeneralSignUp = () => {
           // setTimeCount(180);
           alert("인증번호가 이메일로 전송되었습니다.");
         } else if (res.status === 400) {
-          setErrors({ email: "※ 해당 이메일로 가입된 계정이 존재합니다." });
+          setErrors({ email: "※ 유효하지 않은 이메일입니다. " });
         } else {
           setErrors({ email: "※ 오류가 발생했습니다." });
         }
@@ -123,26 +123,29 @@ const GeneralSignUp = () => {
     [emailValue]
   );
 
-  const onValidVeriCode = (e) => {
-    e.preventDefault();
-    fetch("http://43.201.89.165/mindary/accounts/original/verify-code", {
-      method: "POST",
-      headers: { "Content-Type": "application/json;charset=utf-8" },
-      body: JSON.stringify({
-        email: emailValue.email,
-        code: veriCodeValue,
-      }),
-    }).then((res) => {
-      if (res.status === 200) {
-        setIsVerified(true);
-        alert("인증 성공");
-      } else if (res.status === 400) {
-        setErrors({ veriCode: "인증 시간(3분) 초과" });
-      } else if (res.status === 401) {
-        setErrors({ veriCode: "※ 잘못된 인증 코드입니다." });
-      }
-    });
-  };
+  const onValidVeriCode = useCallback(
+    (e) => {
+      e.preventDefault();
+      fetch("http://43.201.89.165/mindary/accounts/original/verify-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json;charset=utf-8" },
+        body: JSON.stringify({
+          email: emailValue.email,
+          code: veriCodeValue,
+        }),
+      }).then((res) => {
+        if (res.status === 200) {
+          setIsVerified(true);
+          alert("인증 성공");
+        } else if (res.status === 400) {
+          setErrors({ veriCode: "인증 시간(3분) 초과" });
+        } else if (res.status === 401) {
+          setErrors({ veriCode: "※ 잘못된 인증 코드입니다." });
+        }
+      });
+    },
+    [veriCodeValue]
+  );
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
@@ -217,7 +220,7 @@ const GeneralSignUp = () => {
             <tbody>
               <tr>
                 <Cell
-                  width="498px"
+                  width="490px"
                   height="30px"
                   colSpan="3"
                   textAlign="left"
@@ -228,7 +231,7 @@ const GeneralSignUp = () => {
                   &nbsp;회원가입
                 </Cell>
                 <Cell
-                  width="395px"
+                  width="340px"
                   borderTop="none"
                   borderRight="none"
                   borderBottom="none"
@@ -249,7 +252,7 @@ const GeneralSignUp = () => {
                   감정을 기록하고 마음을 정리해요.
                 </Cell>
                 <Cell
-                  width="395px"
+                  width="340px"
                   borderTop="none"
                   borderRight="none"
                   borderBottom="none"
@@ -280,7 +283,7 @@ const GeneralSignUp = () => {
                   </Button>
                 </Cell>
                 <Cell
-                  width="395px"
+                  width="340px"
                   borderTop="none"
                   borderRight="none"
                   borderBottom="none"
@@ -322,7 +325,7 @@ const GeneralSignUp = () => {
                   </Button>
                 </Cell>
                 <Cell
-                  width="395px"
+                  width="340px"
                   borderTop="none"
                   borderRight="none"
                   borderBottom="none"
@@ -348,7 +351,7 @@ const GeneralSignUp = () => {
                   />
                 </Cell>
                 <Cell
-                  width="395px"
+                  width="340px"
                   borderTop="none"
                   borderRight="none"
                   borderBottom="none"
@@ -375,7 +378,7 @@ const GeneralSignUp = () => {
                   />
                 </Cell>
                 <Cell
-                  width="395px"
+                  width="340px"
                   borderTop="none"
                   borderRight="none"
                   borderBottom="none"
@@ -401,7 +404,7 @@ const GeneralSignUp = () => {
                   />
                 </Cell>
                 <Cell
-                  width="395px"
+                  width="340px"
                   borderTop="none"
                   borderRight="none"
                   borderBottom="none"
@@ -427,7 +430,7 @@ const GeneralSignUp = () => {
                   </ButtonWrapper>
                 </Cell>
                 <Cell
-                  width="395px"
+                  width="340px"
                   borderTop="none"
                   borderRight="none"
                   borderBottom="none"
