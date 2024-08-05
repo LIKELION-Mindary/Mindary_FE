@@ -9,9 +9,8 @@ import kakaobtn from "../assets/images/kakao_login.png";
 import { useTheme } from "../styles/ThemeContext";
 import SearchPw from "../components/Auth/SearchPw";
 import GeneralSignUp from "../components/Auth/GeneralSignUp";
-import LogoutBtn from "../components/Auth/LogoutBtn";
 import moment from "moment-timezone"; // Import timezone handling
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const { theme, toggleTheme } = useTheme();
@@ -29,9 +28,11 @@ const Home = () => {
   const handleSearchPwClick = () => {
     setShowSearchPw((prevShowSearchPw) => !prevShowSearchPw);
   };
+
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem("isLoggedIn") === "true"
   );
+
   const handleKakaoLogin = () => {
     try {
       window.location.href = kakaoURL;
@@ -41,11 +42,14 @@ const Home = () => {
       console.error("Login failed", error);
     }
   };
+
   const handleSignupClick = () => {
     setShowSignUp(true); // Show the sign-up page
     setShowSearchPw(false); // Hide the password search if open
+    setErrorMessage1(""); // Clear any login error message
+    setErrorMessage2(""); // Clear any login error message
   };
-  
+
   const handleLogin = async () => {
     if (!email || !password) {
       setErrorMessage2("※ 이메일 혹은 비밀번호가 일치하지 않습니다.");
@@ -65,7 +69,6 @@ const Home = () => {
       );
 
       if (response.status === 200) {
-      // if (response.ok) {theme
         const data = await response.json();
         alert("로그인 성공:", data);
 
@@ -75,10 +78,10 @@ const Home = () => {
         setErrorMessage1("");
         setIsLoggedIn(true); // 로그인 상태를 true로 변경
 
-        const todayDate = moment().tz("Asia/Seoul").format("YYYY-MM-DD"); ///////////////////////////
+        const todayDate = moment().tz("Asia/Seoul").format("YYYY-MM-DD");
         navigate(`/mindary?date=${todayDate}&mode=chat`);
       } else if (response.status === 400) {
-        setErrorMessage1("※ 이메일 혹은 비밀번호가 일치하지 않습니다.");
+        setErrorMessage2("※ 이메일 혹은 비밀번호가 일치하지 않습니다.");
       } else if (response.status === 401) {
         setErrorMessage1("※ 존재하지 않는 계정입니다.");
       } else {
@@ -99,50 +102,50 @@ const Home = () => {
       <Navbar toggleTheme={toggleTheme} />
       <Body>
         <LoginBody>
-        {showSignUp ? (
-          <GeneralSignUp theme={theme}/>
-        ) : (
-          <LoginSection>
-            <Title>로그인</Title>
-            <InputSection>
-              <TitleSection>
-                <SubTitle>항목</SubTitle>
-                <Description>마인더리와 함께하는 마음 기록</Description>
-              </TitleSection>
-              <EmailSection>
-                <Label htmlFor="email">이메일</Label>
-                <EmailInput
-                  id="email"
-                  placeholder="이메일을 입력해주세요."
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </EmailSection>
-              <PwSection>
-                <Label htmlFor="password">비밀번호</Label>
-                <PwInput
-                  id="password"
-                  type="password"
-                  placeholder="비밀번호를 입력해주세요."
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </PwSection>
-              <SelectBar>
-                <Signup onClick={handleSignupClick}>회원가입</Signup>
-                <SearchPwbtn onClick={handleSearchPwClick}>
-                  비밀번호 찾기
-                </SearchPwbtn>
-                {!isLoggedIn ? (<LogoutBtn />) : (<LoginBtn onClick={handleLogin}>로그인</LoginBtn>)}
-              </SelectBar>
-              <SimpleLoginWrapper>
-                <SimpleLogin>간편 로그인</SimpleLogin>
-                <KakaoBtn onClick={handleKakaoLogin} />
-              </SimpleLoginWrapper>
-            </InputSection>
-            {showSearchPw && <SearchPw />}
-          </LoginSection>
-        )}
+          {showSignUp ? (
+            <GeneralSignUp theme={theme} />
+          ) : (
+            <LoginSection>
+              <Title>로그인</Title>
+              <InputSection>
+                <TitleSection>
+                  <SubTitle>항목</SubTitle>
+                  <Description>마인더리와 함께하는 마음 기록</Description>
+                </TitleSection>
+                <EmailSection>
+                  <Label htmlFor="email">이메일</Label>
+                  <EmailInput
+                    id="email"
+                    placeholder="이메일을 입력해주세요."
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </EmailSection>
+                <PwSection>
+                  <Label htmlFor="password">비밀번호</Label>
+                  <PwInput
+                    id="password"
+                    type="password"
+                    placeholder="비밀번호를 입력해주세요."
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </PwSection>
+                <SelectBar>
+                  <Signup onClick={handleSignupClick}>회원가입</Signup>
+                  <SearchPwbtn onClick={handleSearchPwClick}>
+                    비밀번호 찾기
+                  </SearchPwbtn>
+                  <LoginBtn onClick={handleLogin}>로그인</LoginBtn>
+                </SelectBar>
+                <SimpleLoginWrapper>
+                  <SimpleLogin>간편 로그인</SimpleLogin>
+                  <KakaoBtn onClick={handleKakaoLogin} />
+                </SimpleLoginWrapper>
+              </InputSection>
+              {showSearchPw && <SearchPw />}
+            </LoginSection>
+          )}
           {errorMessage1 && <ErrorMessage1>{errorMessage1}</ErrorMessage1>}
           {errorMessage2 && <ErrorMessage2>{errorMessage2}</ErrorMessage2>}
         </LoginBody>
@@ -161,7 +164,7 @@ const Body = styled.div`
   left: 510px;
   top: 261px;
   position: fixed;
-  font-family: 'PreVariable';
+  font-family: "PreVariable";
 `;
 
 const HeaderBase = styled.div`
@@ -252,7 +255,7 @@ const EmailInput = styled.input`
     color: #cccccc;
     font-size: 16px;
     font-weight: 700;
-    font-family: 'PreVariable'; // Body에 font-family: 'PreVariable'; 이거를 써줬지만, 여기는 또 따로 더 써줘야 적용됨
+    font-family: "PreVariable"; // Body에 font-family: 'PreVariable'; 이거를 써줬지만, 여기는 또 따로 더 써줘야 적용됨
   }
 
   &:-webkit-autofill {
@@ -270,7 +273,7 @@ const LoginBtn = styled.button`
   text-decoration: underline;
   cursor: pointer;
   font-size: 14px;
-  background-color: #efefef;
+  background-color: ${({ theme }) => theme.background};
   font-weight: 700;
 `;
 
@@ -333,20 +336,21 @@ const KakaoBtn = styled.div`
 const ErrorMessage1 = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
   color: #ff0000;
   font-size: 16px;
+  padding-left: 10px;
   font-weight: 700;
   height: 29px;
   width: 350px;
   margin-top: 60px;
-  padding-left: 10px;
   text-align: center;
 `;
 const ErrorMessage2 = styled(ErrorMessage1)`
-margin-top:90px;`
+  margin-top: 90px;
+`;
 
 const LoginBody = styled.div`
   display: flex;
+  width: 720px;
   flex-direction: row;
 `;
