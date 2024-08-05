@@ -7,7 +7,7 @@ import { downloadFile } from "./DownloadFile";
 const MonthResult = ({ selectedDate }) => {
   const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
   const [image_url, setImage_URL] = useState();
-  const fullImageUrl = `http://43.201.89.165${image_url}`;
+  const fullImageUrl = `http://localhost:8000${image_url}`;
 
   const getMonthResult = async () => {
     try {

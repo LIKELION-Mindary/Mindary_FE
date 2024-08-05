@@ -6,6 +6,7 @@ import KakaoLogin from "./components/Auth/KakaoLogin";
 import Archive from "./pages/Archive";
 import { ThemeProvider } from "./styles/ThemeContext";
 import Landing from "./pages/Landing";
+import GeneralSignUp from "./pages/GeneralSignUp";
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
           <Route path="/accounts/kakao" element={<KakaoLogin />} />
           <Route path="/mindary" element={<Record />} />
           <Route path="/mindary/records/archive" element={<Archive />} />
+          <Route path="/signup" element={<GeneralSignUp />} />
         </Routes>
       </ThemeProvider>
     </BrowserRouter>

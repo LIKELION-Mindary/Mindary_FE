@@ -13,9 +13,15 @@ import { useNavigate } from "react-router-dom";
 const Landing = () => {
   const { theme, toggleTheme } = useTheme(); // Use useTheme hook to get theme and toggleTheme
   const navigate = useNavigate(); // Initialize useNavigate hook
-  console.log(theme);
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
   const handleImageClick = () => {
-    navigate("/login"); // Navigate to /login when the image is clicked
+    const formattedDate = new Date().toISOString().split("T")[0];
+    if (isLoggedIn) {
+      navigate(`/mindary?date=${formattedDate}&mode=chat`);
+    } else {
+      navigate("/login");
+    }
   };
 
   return (

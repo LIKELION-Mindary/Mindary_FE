@@ -167,7 +167,7 @@ const Archive = () => {
   const [summaryImageUrl, setSummaryImageUrl] = useState();
   const yearMonth = `${selectedDate.getFullYear()}${("0" + (selectedDate.getMonth() + 1)).slice(-2)}`;
 
-  const fullImageUrl = `http://43.201.89.165${imageurl}`;
+  const fullImageUrl = `http://localhost:8000${imageurl}`;
 
   const getMonthlySummaryImage = async (yearMonth) => {
     try {

@@ -8,7 +8,7 @@ import DefaultExcel from "../components/Background/DefaultExcel";
 import kakaobtn from "../assets/images/kakao_login.png";
 import { useTheme } from "../styles/ThemeContext";
 import SearchPw from "../components/Auth/SearchPw";
-import GeneralSignUp from "../components/Auth/GeneralSignUp";
+import GeneralSignUp from "./GeneralSignUp";
 import moment from "moment-timezone"; // Import timezone handling
 import { useNavigate } from "react-router-dom";
 
@@ -29,14 +29,12 @@ const Home = () => {
     setShowSearchPw((prevShowSearchPw) => !prevShowSearchPw);
   };
 
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    localStorage.getItem("isLoggedIn") === "true"
-  );
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleKakaoLogin = () => {
     try {
-      window.location.href = kakaoURL;
       localStorage.setItem("isLoggedIn", "true");
+      window.location.href = kakaoURL;
       setIsLoggedIn(true);
     } catch (error) {
       console.error("Login failed", error);
@@ -48,6 +46,7 @@ const Home = () => {
     setShowSearchPw(false); // Hide the password search if open
     setErrorMessage1(""); // Clear any login error message
     setErrorMessage2(""); // Clear any login error message
+    navigate("/signup");
   };
 
   const handleLogin = async () => {
@@ -58,7 +57,7 @@ const Home = () => {
 
     try {
       const response = await fetch(
-        "http://43.201.89.165/mindary/accounts/original/login",
+        "http://127.0.0.1:8000/mindary/accounts/original/login",
         {
           method: "POST",
           headers: {
@@ -72,11 +71,12 @@ const Home = () => {
         const data = await response.json();
         alert("로그인 성공");
 
+        localStorage.setItem("isLoggedIn", "true");
+        setIsLoggedIn(true);
         localStorage.setItem("access_token", data.access_token);
         localStorage.setItem("refresh_token", data.refresh_token);
 
         setErrorMessage1("");
-        setIsLoggedIn(true); // 로그인 상태를 true로 변경
 
         const todayDate = moment().tz("Asia/Seoul").format("YYYY-MM-DD");
         navigate(`/mindary?date=${todayDate}&mode=chat`);
@@ -98,57 +98,48 @@ const Home = () => {
       <DefaultExcel />
       <Navbar toggleTheme={toggleTheme} />
       <Body>
-        <LoginBody showSignUp={showSignUp}>
-          {showSignUp ? (
-            <GeneralSignUp
-              theme={theme}
-              onSignupSuccess={() => {
-                setShowSignUp(false);
-                navigate("/login");
-              }}
-            />
-          ) : (
-            <LoginSection>
-              <Title>로그인</Title>
-              <InputSection>
-                <TitleSection>
-                  <SubTitle>항목</SubTitle>
-                  <Description>마인더리와 함께하는 마음 기록</Description>
-                </TitleSection>
-                <EmailSection>
-                  <Label htmlFor="email">이메일</Label>
-                  <EmailInput
-                    id="email"
-                    placeholder="이메일을 입력해주세요."
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </EmailSection>
-                <PwSection>
-                  <Label htmlFor="password">비밀번호</Label>
-                  <PwInput
-                    id="password"
-                    type="password"
-                    placeholder="비밀번호를 입력해주세요."
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </PwSection>
-                <SelectBar>
-                  <Signup onClick={handleSignupClick}>회원가입</Signup>
-                  <SearchPwbtn onClick={handleSearchPwClick}>
-                    비밀번호 찾기
-                  </SearchPwbtn>
-                  <LoginBtn onClick={handleLogin}>로그인</LoginBtn>
-                </SelectBar>
-                <SimpleLoginWrapper>
-                  <SimpleLogin>간편 로그인</SimpleLogin>
-                  <KakaoBtn onClick={handleKakaoLogin} />
-                </SimpleLoginWrapper>
-              </InputSection>
-              {showSearchPw && <SearchPw />}
-            </LoginSection>
-          )}
+        <LoginBody>
+          <LoginSection>
+            <Title>로그인</Title>
+            <InputSection>
+              <TitleSection>
+                <SubTitle>항목</SubTitle>
+                <Description>마인더리와 함께하는 마음 기록</Description>
+              </TitleSection>
+              <EmailSection>
+                <Label htmlFor="email">이메일</Label>
+                <EmailInput
+                  id="email"
+                  placeholder="이메일을 입력해주세요."
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </EmailSection>
+              <PwSection>
+                <Label htmlFor="password">비밀번호</Label>
+                <PwInput
+                  id="password"
+                  type="password"
+                  placeholder="비밀번호를 입력해주세요."
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </PwSection>
+              <SelectBar>
+                <Signup onClick={handleSignupClick}>회원가입</Signup>
+                <SearchPwbtn onClick={handleSearchPwClick}>
+                  비밀번호 찾기
+                </SearchPwbtn>
+                <LoginBtn onClick={handleLogin}>로그인</LoginBtn>
+              </SelectBar>
+              <SimpleLoginWrapper>
+                <SimpleLogin>간편 로그인</SimpleLogin>
+                <KakaoBtn onClick={handleKakaoLogin} />
+              </SimpleLoginWrapper>
+            </InputSection>
+            {showSearchPw && <SearchPw />}
+          </LoginSection>
+
           <Error>
             {errorMessage1 && <ErrorMessage1>{errorMessage1}</ErrorMessage1>}
             {errorMessage2 && <ErrorMessage2>{errorMessage2}</ErrorMessage2>}
@@ -162,6 +153,7 @@ const Home = () => {
 export default Home;
 const Error = styled.div`
   display: flex;
+  margin-top: 60px;
   flex-direction: column;
 `;
 const Body = styled.div`
@@ -351,7 +343,6 @@ const ErrorMessage1 = styled.div`
   font-family: "Prevariable";
   height: 29px;
   width: 350px;
-  margin-top: 60px;
   text-align: center;
 `;
 const ErrorMessage2 = styled(ErrorMessage1)`
@@ -360,6 +351,6 @@ const ErrorMessage2 = styled(ErrorMessage1)`
 
 const LoginBody = styled.div`
   display: flex;
-  width: ${(props) => (props.showSignUp ? "900px" : "720px")};
+  width: 720px;
   flex-direction: row;
 `;

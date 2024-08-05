@@ -77,9 +77,7 @@ export default Record;
 const Mainpage = styled.div``;
 
 const Container = styled.div`
-  width: 100%;
   display: flex;
-  height: 100%;
   flex-direction: row;
   align-items: center;
   position: fixed;
