@@ -247,9 +247,9 @@ const Archive = () => {
               </SearchBar>
             </KeywordSearching>
             <KeywordResult>
+              <Title>검색결과</Title>
               {currentKeywordItems.map((item) => (
                 <>
-                  <Title>검색결과</Title>
                   <KeywordContainer
                     key={item.id}
                     onClick={() => openModal(item.id)}
