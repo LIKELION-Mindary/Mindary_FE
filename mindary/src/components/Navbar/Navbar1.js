@@ -17,7 +17,7 @@ const Navbar1 = ({ selectedDate }) => {
   const handleLogout = async () => {
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/mindary/accounts/original/logout",
+        "http://43.201.89.165/mindary/accounts/original/logout",
         {
           method: "POST",
           headers: {

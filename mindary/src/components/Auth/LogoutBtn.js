@@ -9,7 +9,7 @@ function LogoutBtn() {
     try {
       // 백엔드로 로그아웃 요청 보내기
       const response = await fetch(
-        "http://127.0.0.1:8000/mindary/accounts/original/logout",
+        "http://43.201.89.165/mindary/accounts/original/logout",
         {
           method: "POST",
           headers: {
