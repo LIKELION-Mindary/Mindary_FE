@@ -16,7 +16,7 @@ const SearchPw = () => {
 
     try {
       const response = await fetch(
-        "http://43.201.89.165/mindary/accounts/original/new-password",
+        "http://127.0.0.1:8000/mindary/accounts/original/new-password",
         {
           method: "POST",
           headers: {
