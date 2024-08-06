@@ -132,10 +132,6 @@ const Home = () => {
                 </SearchPwbtn>
                 <LoginBtn onClick={handleLogin}>로그인</LoginBtn>
               </SelectBar>
-              <SimpleLoginWrapper>
-                <SimpleLogin>간편 로그인</SimpleLogin>
-                <KakaoBtn onClick={handleKakaoLogin} />
-              </SimpleLoginWrapper>
             </InputSection>
             {showSearchPw && <SearchPw />}
           </LoginSection>
@@ -281,7 +277,6 @@ const SelectBar = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  border-bottom: 1px solid black;
   height: 60px;
 `;
 
