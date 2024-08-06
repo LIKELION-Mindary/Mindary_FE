@@ -25,7 +25,7 @@ const Record = () => {
     ? moment.tz(urlDate, "Asia/Seoul").toDate()
     : new Date(); // Fallback to current date if no date in URL
 
-  const [selectedDate, setSelectedDate] = useState(initialDate);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
     // Format the date as YYYY-MM-DD
